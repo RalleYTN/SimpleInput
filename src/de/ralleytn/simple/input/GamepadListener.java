@@ -6,7 +6,7 @@ package de.ralleytn.simple.input;
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface GamepadListener {
+public interface GamepadListener extends DeviceListener {
 
 	/**
 	 * Called when an analog stick was pushed.

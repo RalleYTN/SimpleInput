@@ -6,6 +6,8 @@ import java.util.List;
 import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
+import net.java.games.input.ControllerEvent;
+import net.java.games.input.ControllerListener;
 
 /**
  * Manages the input devices.
@@ -15,12 +17,10 @@ import net.java.games.input.ControllerEnvironment;
  */
 public final class DeviceManager {
 
-	private static Controller[] CONTROLLERS;
+	private static List<Controller> CONTROLLERS;
 	private static ControllerEnvironment ENVIRONMENT;
 	private static List<Device> DEVICES;
-	private static int NUMBER_OF_MICE;
-	private static int NUMBER_OF_KEYBOARDS;
-	private static int NUMBER_OF_GAMEPADS;
+	private static ControllerListener CONTROLLER_LISTENER;
 	
 	private DeviceManager() {}
 	
@@ -31,39 +31,80 @@ public final class DeviceManager {
 	 */
 	public static final void create() {
 		
-		DeviceManager.ENVIRONMENT = ControllerEnvironment.getDefaultEnvironment();
-		DeviceManager.update();
-	}
-	
-	/**
-	 * Updates the context.
-	 * Only important if you want to get devices that were plugged in after creating the context.
-	 * This will create new object references for the devices, that means all listeners have to be applied on them again.
-	 * @since 1.0.0
-	 */
-	public static final void update() {
-		
-		DeviceManager.CONTROLLERS = DeviceManager.ENVIRONMENT.getControllers();
+		DeviceManager.CONTROLLERS = new ArrayList<>();
 		DeviceManager.DEVICES = new ArrayList<>();
+		DeviceManager.CONTROLLER_LISTENER = new ControllerListener() {
+			
+			// FIXME
+			// WHY DOES A CONTROLLER LISTENER EXIST IF IT DOESN'T WORK!?
+			
+			@Override
+			public void controllerRemoved(ControllerEvent event) {
+				
+				// System.out.println("Removed " + event.getController().getName());
+				
+				List<Device> devices = new ArrayList<>();
+				DeviceManager.DEVICES.forEach(device -> {
+
+					if(device.getController().equals(event.getController())) {
+						
+						device.remove();
+						
+					} else {
+						
+						devices.add(device);
+					}
+				});
+				
+				DeviceManager.DEVICES = devices;
+			}
+			
+			@Override
+			public void controllerAdded(ControllerEvent event) {
+				
+				// System.out.println("Added " + event.getController().getName());
+				
+				Controller controller = event.getController();
+				Type type = controller.getType();
+				
+				if(type == Type.MOUSE) {
+					
+					DeviceManager.DEVICES.add(new Mouse(controller));
+					DeviceManager.CONTROLLERS.add(controller);
+					
+				} else if(type == Type.KEYBOARD) {
+					
+					DeviceManager.DEVICES.add(new Keyboard(controller));
+					DeviceManager.CONTROLLERS.add(controller);
+					
+				} else if(type == Type.GAMEPAD || type == Type.STICK) {
+					
+					DeviceManager.DEVICES.add(new Gamepad(controller));
+					DeviceManager.CONTROLLERS.add(controller);
+				}
+			}
+		};
+		DeviceManager.ENVIRONMENT = ControllerEnvironment.getDefaultEnvironment();
+		DeviceManager.ENVIRONMENT.addControllerListener(DeviceManager.CONTROLLER_LISTENER);
 		
-		for(Controller controller : DeviceManager.CONTROLLERS) {
+		for(Controller controller : DeviceManager.ENVIRONMENT.getControllers()) {
 			
 			Type type = controller.getType();
 			
 			if(type == Type.MOUSE) {
 				
 				DeviceManager.DEVICES.add(new Mouse(controller));
-				DeviceManager.NUMBER_OF_MICE++;
+				DeviceManager.CONTROLLERS.add(controller);
 				
 			} else if(type == Type.KEYBOARD) {
 				
 				DeviceManager.DEVICES.add(new Keyboard(controller));
-				DeviceManager.NUMBER_OF_KEYBOARDS++;
+				DeviceManager.CONTROLLERS.add(controller);
 				
 			} else if(type == Type.GAMEPAD || type == Type.STICK) {
 				
 				DeviceManager.DEVICES.add(new Gamepad(controller));
-				DeviceManager.NUMBER_OF_GAMEPADS++;
+				DeviceManager.CONTROLLERS.add(controller);
 			}
 		}
 	}
@@ -75,13 +116,11 @@ public final class DeviceManager {
 	 */
 	public static final void destroy() {
 		
+		DeviceManager.ENVIRONMENT.removeControllerListener(DeviceManager.CONTROLLER_LISTENER);
+		DeviceManager.CONTROLLER_LISTENER = null;
 		DeviceManager.ENVIRONMENT = null;
 		DeviceManager.CONTROLLERS = null;
 		DeviceManager.DEVICES = null;
-		
-		DeviceManager.NUMBER_OF_MICE = 0;
-		DeviceManager.NUMBER_OF_KEYBOARDS = 0;
-		DeviceManager.NUMBER_OF_GAMEPADS = 0;
 	}
 	
 	/**
@@ -91,10 +130,7 @@ public final class DeviceManager {
 	 */
 	public static final void addMouseListener(MouseListener listener) {
 		
-		for(Mouse mouse : DeviceManager.getMice()) {
-			
-			mouse.addMouseListener(listener);
-		}
+		DeviceManager.getMice().forEach(mouse -> mouse.addMouseListener(listener));
 	}
 	
 	/**
@@ -104,29 +140,23 @@ public final class DeviceManager {
 	 */
 	public static final void removeMouseListener(MouseListener listener) {
 		
-		for(Mouse mouse : DeviceManager.getMice()) {
-			
-			mouse.removeMouseListener(listener);
-		}
+		DeviceManager.getMice().forEach(mouse -> mouse.removeMouseListener(listener));
 	}
 	
 	/**
 	 * @return all registered mice
 	 * @since 1.0.0
 	 */
-	public static final Mouse[] getMice() {
+	public static final List<Mouse> getMice() {
 		
-		Mouse[] mice = new Mouse[DeviceManager.NUMBER_OF_MICE];
-		int index = 0;
-		
-		for(Device device : DeviceManager.DEVICES) {
+		List<Mouse> mice = new ArrayList<>();
+		DeviceManager.DEVICES.forEach(device -> {
 			
 			if(device instanceof Mouse) {
 				
-				mice[index] = (Mouse)device;
-				index++;
+				mice.add((Mouse)device);
 			}
-		}
+		});
 		
 		return mice;
 	}
@@ -135,19 +165,16 @@ public final class DeviceManager {
 	 * @return all registered keyboards
 	 * @since 1.0.0
 	 */
-	public static final Keyboard[] getKeyboards() {
+	public static final List<Keyboard> getKeyboards() {
 		
-		Keyboard[] keyboards = new Keyboard[DeviceManager.NUMBER_OF_KEYBOARDS];
-		int index = 0;
-		
-		for(Device device : DeviceManager.DEVICES) {
+		List<Keyboard> keyboards = new ArrayList<>();
+		DeviceManager.DEVICES.forEach(device -> {
 			
 			if(device instanceof Keyboard) {
 				
-				keyboards[index] = (Keyboard)device;
-				index++;
+				keyboards.add((Keyboard)device);
 			}
-		}
+		});
 		
 		return keyboards;
 	}
@@ -156,19 +183,16 @@ public final class DeviceManager {
 	 * @return all registered gamepads
 	 * @since 1.0.0
 	 */
-	public static final Gamepad[] getGamepads() {
+	public static final List<Gamepad> getGamepads() {
 		
-		Gamepad[] gamepads = new Gamepad[DeviceManager.NUMBER_OF_GAMEPADS];
-		int index = 0;
-		
-		for(Device device : DeviceManager.DEVICES) {
+		List<Gamepad> gamepads = new ArrayList<>();
+		DeviceManager.DEVICES.forEach(device -> {
 			
 			if(device instanceof Gamepad) {
 				
-				gamepads[index] = (Gamepad)device;
-				index++;
+				gamepads.add((Gamepad)device);
 			}
-		}
+		});
 		
 		return gamepads;
 	}

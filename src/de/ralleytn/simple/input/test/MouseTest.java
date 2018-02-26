@@ -1,6 +1,7 @@
 package de.ralleytn.simple.input.test;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -14,8 +15,8 @@ public class MouseTest {
 	public static void main(String[] args) {
 		
 		DeviceManager.create();
-		Mouse[] mice = DeviceManager.getMice();
-		Mouse mouse = mice[0];
+		List<Mouse> mice = DeviceManager.getMice();
+		Mouse mouse = mice.get(0);
 		mouse.addMouseListener(new MouseListener() {
 			
 			@Override

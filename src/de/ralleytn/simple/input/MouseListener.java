@@ -6,7 +6,7 @@ package de.ralleytn.simple.input;
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface MouseListener {
+public interface MouseListener extends DeviceListener {
 
 	/**
 	 * Called when a mouse is moved and not dragged.

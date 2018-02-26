@@ -1,5 +1,9 @@
 package de.ralleytn.simple.input;
 
+import java.awt.AWTException;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.Robot;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,24 +29,22 @@ public class Gamepad extends Device {
 	 */
 	public static final float MAX_DEAD_ZONE = 0.9999999F;
 	
-	private static final float DEAD_POINT_POSITIVE = (float)-1.5258789E-5;
-	private static final float DEAD_POINT_NEGATIVE = -Gamepad.DEAD_POINT_POSITIVE;
 	private static final Identifier[] VALID_BUTTONS = {
 			
 		// PC/PlayStation | XBox
-		Identifier.Button._0, Identifier.Button.Y,
-		Identifier.Button._1, Identifier.Button.B,
-		Identifier.Button._2, Identifier.Button.A,
-		Identifier.Button._3, Identifier.Button.X,
-		Identifier.Button._4, Identifier.Button.LEFT_THUMB,
-		Identifier.Button._5, Identifier.Button.RIGHT_THUMB,
-		Identifier.Button._6, Identifier.Button.LEFT_THUMB2,
-		Identifier.Button._7, Identifier.Button.RIGHT_THUMB2,
-		Identifier.Button._8, Identifier.Button.SELECT,
-		Identifier.Button._9, Identifier.Button.START,
-		Identifier.Button._10, Identifier.Button.LEFT_THUMB3,
-		Identifier.Button._11, Identifier.Button.RIGHT_THUMB3,
-		Identifier.Button._12, Identifier.Button.MODE
+		Button._0, Button.Y,
+		Button._1, Button.B,
+		Button._2, Button.A,
+		Button._3, Button.X,
+		Button._4, Button.LEFT_THUMB,
+		Button._5, Button.RIGHT_THUMB,
+		Button._6, Button.LEFT_THUMB2,
+		Button._7, Button.RIGHT_THUMB2,
+		Button._8, Button.SELECT,
+		Button._9, Button.START,
+		Button._10, Button.LEFT_THUMB3,
+		Button._11, Button.RIGHT_THUMB3,
+		Button._12, Button.MODE
 	};
 	
 	private Rumbler[] rumblers;
@@ -54,20 +56,15 @@ public class Gamepad extends Device {
 	private float axisRZ; // Y for right analog stick
 	private float axisZ; // X for right analog stick
 	private float deadZone;
+	private float cursorSensity;
+	private boolean controlCursorWithAnalogStick;
+	private int analogStickControllingCursor;
+	private Robot robot;
 	
-	private boolean xDown;
-	private boolean yDown;
-	private boolean aDown;
-	private boolean bDown;
-	private boolean selectDown;
-	private boolean startDown;
-	private boolean modeDown;
-	private boolean l1Down;
-	private boolean l2Down;
-	private boolean l3Down;
-	private boolean r1Down;
-	private boolean r2Down;
-	private boolean r3Down;
+	private boolean xDown, yDown, aDown, bDown;
+	private boolean selectDown, modeDown, startDown;
+	private boolean l1Down, l2Down, l3Down;
+	private boolean r1Down, r2Down, r3Down;
 	
 	/**
 	 * @param controller the {@linkplain Controller} that should be wrapped
@@ -79,6 +76,16 @@ public class Gamepad extends Device {
 
 		this.rumblers = controller.getRumblers();
 		this.listeners = new ArrayList<>();
+		this.cursorSensity = 4.0F;
+		
+		try {
+			
+			this.robot = new Robot();
+			
+		} catch(AWTException exception) {
+			
+			throw new RuntimeException(exception);
+		}
 		
 		for(Component component : controller.getComponents()) {
 			
@@ -297,9 +304,90 @@ public class Gamepad extends Device {
 		
 		return this.deadZone;
 	}
+	
+	/**
+	 * Sets the sensity with which the cursor is moved.
+	 * @param sensity the sensity with which the cursor is moved
+	 * @since 1.0.0
+	 */
+	public void setCursorSensity(float sensity) {
+		
+		this.cursorSensity = sensity;
+	}
+	
+	/**
+	 * Enables/Disables the ability to control the mouse cursor with an analog stick.
+	 * @param flag {@code true} = enable, {@code false} = disable
+	 * @since 1.0.0
+	 */
+	public void setControlCursorWithAnalogStick(boolean flag) {
+		
+		this.controlCursorWithAnalogStick = true;
+	}
+	
+	/**
+	 * Sets which analog stick should control the mouse cursor.
+	 * @param analogStick can be either {@link GamepadEvent#ANALOG_STICK_LEFT} or {@link GamepadEvent#ANALOG_STICK_RIGHT}
+	 * @since 1.0.0
+	 */
+	public void setAnalogStickControllingCursor(int analogStick) {
+		
+		this.analogStickControllingCursor = analogStick;
+	}
+	
+	/**
+	 * @return {@code true} if an analog stick is controlling the mouse cursor, else {@code false}
+	 * @since 1.0.0
+	 */
+	public boolean isCursorControlledByAnalogStick() {
+		
+		return this.controlCursorWithAnalogStick;
+	}
+	
+	/**
+	 * @return the sensity with which the cursor is moved
+	 * @since 1.0.0
+	 */
+	public float getCursorSensity() {
+		
+		return this.cursorSensity;
+	}
+	
+	/**
+	 * @return the analog stick controlling the mouse cursor (can be either {@link GamepadEvent#ANALOG_STICK_LEFT} or {@link GamepadEvent#ANALOG_STICK_RIGHT})
+	 * @since 1.0.0
+	 */
+	public int getAnalogStickControllingCursor() {
+		
+		return this.analogStickControllingCursor;
+	}
+	
+	@Override
+	protected void update() {
+		
+		if(this.controlCursorWithAnalogStick) {
+			
+			float x = 0;
+			float y = 0;
+			
+			if(this.analogStickControllingCursor == GamepadEvent.ANALOG_STICK_LEFT) {
+				
+				x = this.axisX;
+				y = this.axisY;
+				
+			} else if(this.analogStickControllingCursor == GamepadEvent.ANALOG_STICK_RIGHT) {
+				
+				x = this.axisZ;
+				y = this.axisRZ;
+			}
+			
+			Point cursorPosition = MouseInfo.getPointerInfo().getLocation();
+			this.robot.mouseMove((int)(cursorPosition.x + (x * this.cursorSensity)), (int)(cursorPosition.y + (y * this.cursorSensity)));
+		}
+	}
 
 	@Override
-	protected void update(Event event) {
+	protected void onEvent(Event event) {
 		
 		Component component = event.getComponent();
 		Identifier id = component.getIdentifier();
@@ -443,7 +531,7 @@ public class Gamepad extends Device {
 	
 	private static final boolean isDead(float value) {
 		
-		return value == Gamepad.DEAD_POINT_NEGATIVE || value == Gamepad.DEAD_POINT_POSITIVE;
+		return value < 0.1F && value > -0.1F;
 	}
 	
 	private static final boolean isButton(Identifier id) {
@@ -457,5 +545,12 @@ public class Gamepad extends Device {
 		}
 		
 		return false;
+	}
+
+	@Override
+	protected void remove() {
+		
+		this.listeners.forEach(listener -> listener.onRemove());
+		this.stopListening();
 	}
 }

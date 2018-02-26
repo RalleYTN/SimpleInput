@@ -8,7 +8,7 @@ import net.java.games.input.Component.Identifier;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class KeyboardEvent extends InputEvent {
+public class KeyboardEvent extends DeviceEvent {
 
 	private final Identifier id;
 	

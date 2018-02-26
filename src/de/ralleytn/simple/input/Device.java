@@ -37,9 +37,10 @@ public abstract class Device {
 					
 					while(queue.getNextEvent(event)) {
 						
-						this.update(event);
+						this.onEvent(event);
 					}
 					
+					this.update();
 					Thread.sleep(this.timeBetweenUpdates);
 				}
 				
@@ -50,7 +51,24 @@ public abstract class Device {
 		});
 	}
 	
-	protected abstract void update(Event event);
+	/**
+	 * Called whenever JInput can detect an event from this device.
+	 * @param event the JInput event
+	 * @since 1.0.0
+	 */
+	protected abstract void onEvent(Event event);
+	
+	/**
+	 * Called when the device was removed from its port.
+	 * @since 1.0.0
+	 */
+	protected abstract void remove();
+	
+	/**
+	 * Called continuously in the listening thread.
+	 * @since 1.0.0
+	 */
+	protected abstract void update();
 	
 	/**
 	 * Sets how long the thread will wait after an update.
@@ -107,5 +125,10 @@ public abstract class Device {
 	public long getTimeBetweenUpdates() {
 		
 		return this.timeBetweenUpdates;
+	}
+	
+	Controller getController() {
+		
+		return this.controller;
 	}
 }

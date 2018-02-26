@@ -6,6 +6,8 @@ import java.util.List;
 
 import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
+import net.java.games.input.Component.Identifier.Axis;
+import net.java.games.input.Component.Identifier.Button;
 import net.java.games.input.Controller;
 import net.java.games.input.Event;
 
@@ -17,10 +19,18 @@ import net.java.games.input.Event;
  */
 public class Mouse extends Device {
 
+	private static final Identifier[] VALID_BUTTONS = {
+			
+		Button.LEFT,
+		Button.MIDDLE,
+		Button.RIGHT
+	};
+	
 	private List<MouseListener> listeners;
 	private boolean leftDown;
 	private boolean rightDown;
 	private boolean middleDown;
+	private int buttonCount;
 	
 	/**
 	 * @param controller the {@linkplain Controller} that should be wrapped
@@ -31,6 +41,21 @@ public class Mouse extends Device {
 		super(controller);
 		
 		this.listeners = new ArrayList<>();
+		
+		for(Component component : controller.getComponents()) {
+			
+			if(Mouse.isButton(component.getIdentifier())) {
+				
+				this.buttonCount++;
+			}
+		}
+	}
+	
+	@Override
+	protected void remove() {
+		
+		this.listeners.forEach(listener -> listener.onRemove());
+		this.stopListening();
 	}
 	
 	/**
@@ -72,15 +97,21 @@ public class Mouse extends Device {
 		
 		return this.listeners.get(index);
 	}
+	
+	@Override
+	protected void update() {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
-	protected void update(Event event) {
+	protected void onEvent(Event event) {
 		
 		Component component = event.getComponent();
 		Identifier id = component.getIdentifier();
 		float value = event.getValue();
 		
-		if(id == Identifier.Button.LEFT) {
+		if(id == Button.LEFT) {
 
 			this.leftDown = value == 1.0F;
 			
@@ -93,7 +124,7 @@ public class Mouse extends Device {
 				this.listeners.forEach(listener -> listener.onRelease(new MouseEvent(this, 0, 0, 0, id)));
 			}
 			
-		} else if(id == Identifier.Button.RIGHT) {
+		} else if(id == Button.RIGHT) {
 			
 			this.rightDown = value == 1.0F;
 			
@@ -106,7 +137,7 @@ public class Mouse extends Device {
 				this.listeners.forEach(listener -> listener.onRelease(new MouseEvent(this, 0, 0, 0, id)));
 			}
 			
-		} else if(id == Identifier.Button.MIDDLE) {
+		} else if(id == Button.MIDDLE) {
 			
 			this.middleDown = value == 1.0F;
 			
@@ -119,7 +150,7 @@ public class Mouse extends Device {
 				this.listeners.forEach(listener -> listener.onRelease(new MouseEvent(this, 0, 0, 0, id)));
 			}
 			
-		} else if(id == Identifier.Axis.X) {
+		} else if(id == Axis.X) {
 			
 			float deltaX = event.getValue();
 			
@@ -140,7 +171,7 @@ public class Mouse extends Device {
 				this.listeners.forEach(listener -> listener.onMove(new MouseEvent(this, deltaX, 0, 0, null)));
 			}
 			
-		} else if(id == Identifier.Axis.Y) {
+		} else if(id == Axis.Y) {
 			
 			float deltaY = event.getValue();
 			
@@ -161,10 +192,19 @@ public class Mouse extends Device {
 				this.listeners.forEach(listener -> listener.onMove(new MouseEvent(this, 0, deltaY, 0, null)));
 			}
 			
-		} else if(id == Identifier.Axis.Z) {
+		} else if(id == Axis.Z) {
 			
 			this.listeners.forEach(listener -> listener.onScroll(new MouseEvent(this, 0, 0, event.getValue(), null)));
 		}
+	}
+	
+	/**
+	 * @return the number of buttons on this mouse (extra buttons are not counted)
+	 * @since 1.0.0
+	 */
+	public int getButtonCount() {
+		
+		return this.buttonCount;
 	}
 	
 	/**
@@ -210,5 +250,18 @@ public class Mouse extends Device {
 	public boolean isMiddleDown() {
 		
 		return this.middleDown;
+	}
+	
+	private static final boolean isButton(Identifier id) {
+		
+		for(Identifier button : Mouse.VALID_BUTTONS) {
+			
+			if(button == id) {
+				
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

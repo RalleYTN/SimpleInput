@@ -6,11 +6,11 @@ package de.ralleytn.simple.input;
  * @version 1.0.0
  * @since 1.0.0
  */
-public abstract class InputEvent {
+public abstract class DeviceEvent {
 
 	protected final Device device;
 	
-	public InputEvent(Device device) {
+	public DeviceEvent(Device device) {
 		
 		this.device = device;
 	}

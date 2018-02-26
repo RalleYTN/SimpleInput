@@ -8,7 +8,7 @@ import net.java.games.input.Component.Identifier;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class GamepadEvent extends InputEvent {
+public class GamepadEvent extends DeviceEvent {
 
 	/**
 	 * The left analog stick

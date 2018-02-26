@@ -1,6 +1,7 @@
 package de.ralleytn.simple.input.test;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -14,9 +15,10 @@ public class GamepadTest {
 	public static void main(String[] args) {
 		
 		DeviceManager.create();
-		Gamepad[] gamepads = DeviceManager.getGamepads();
-		Gamepad gamepad = gamepads[0];
+		List<Gamepad> gamepads = DeviceManager.getGamepads();
+		Gamepad gamepad = gamepads.get(0);
 		System.out.println("Button Count: " + gamepad.getButtonCount());
+		gamepad.setControlCursorWithAnalogStick(true);
 		gamepad.addGamepadListener(new GamepadListener() {
 			
 			@Override
@@ -49,7 +51,7 @@ public class GamepadTest {
 				System.out.println("Press: " + event.getButton());
 			}
 		});
-		gamepad.startListening();
+		//gamepad.startListening();
 		
 		JFrame frame = new JFrame();
 		frame.setSize(800, 600);

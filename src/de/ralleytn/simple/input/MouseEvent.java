@@ -11,7 +11,7 @@ import net.java.games.input.Component.Identifier;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class MouseEvent extends InputEvent {
+public class MouseEvent extends DeviceEvent {
 
 	/**
 	 * Left mouse button

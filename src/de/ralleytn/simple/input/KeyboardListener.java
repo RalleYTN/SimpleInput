@@ -6,7 +6,7 @@ package de.ralleytn.simple.input;
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface KeyboardListener {
+public interface KeyboardListener extends DeviceListener {
 
 	/**
 	 * Called when a key was pressed.
