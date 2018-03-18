@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/RalleYTN/SimpleInput.svg?branch=master)](https://travis-ci.org/RalleYTN/SimpleInput)
+[![Coverage Status](https://coveralls.io/repos/github/RalleYTN/SimpleInput/badge.svg?branch=master)](https://coveralls.io/github/RalleYTN/SimpleInput?branch=master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a133cfa2a84d47b3b6f1ab7b71995999)](https://www.codacy.com/app/ralph.niemitz/SimpleInput?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=RalleYTN/SimpleInput&amp;utm_campaign=Badge_Grade)
+
 # Description
 
 This library provides simple input listeners for keyboard, mouse and gamepad that work outside of AWT.
