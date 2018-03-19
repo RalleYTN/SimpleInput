@@ -56,12 +56,12 @@ public class MouseEvent extends DeviceEvent {
 	
 	private final float deltaX;
 	private final float deltaY;
-	private final float deltaZ;
+	private final float unitsToScroll;
 	private final Identifier id;
 	private final int x;
 	private final int y;
 	
-	public MouseEvent(Device device, float deltaX, float deltaY, float deltaZ, Identifier id) {
+	public MouseEvent(Device device, float deltaX, float deltaY, float unitsToScroll, Identifier id) {
 		
 		super(device);
 		
@@ -69,7 +69,7 @@ public class MouseEvent extends DeviceEvent {
 		
 		this.deltaX = deltaX;
 		this.deltaY = deltaY;
-		this.deltaZ = deltaZ;
+		this.unitsToScroll = unitsToScroll;
 		this.id = id;
 		this.x = location.x;
 		this.y = location.y;
@@ -112,12 +112,12 @@ public class MouseEvent extends DeviceEvent {
 	}
 	
 	/**
-	 * @return {@code -1} if the mouse wheel was scrolled down, {@code 1} if it was scrolled up
+	 * @return a negative value if the mouse wheel was scrolled down and a positive value if it was scrolled up
 	 * @since 1.0.0
 	 */
-	public final float getDeltaZ() {
+	public final float getUnitsToScroll() {
 		
-		return this.deltaZ;
+		return this.unitsToScroll;
 	}
 	
 	/**

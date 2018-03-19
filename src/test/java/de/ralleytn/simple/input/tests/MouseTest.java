@@ -23,7 +23,59 @@
  */
 package de.ralleytn.simple.input.tests;
 
+import java.util.List;
+
+import javax.swing.JFrame;
+
+import org.junit.jupiter.api.Test;
+
+import de.ralleytn.simple.input.DeviceManager;
+import de.ralleytn.simple.input.Mouse;
+
 class MouseTest {
 
+	@Test
+	public void testIsDown() {
+		
+		// SETUP
+		DeviceManager.create();
+		List<Mouse> mice = DeviceManager.getMice();
+		Mouse mouse = mice.get(0);
+		mouse.startListening();
+		
+		JFrame frame = new JFrame();
+		frame.setSize(300, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		
+		// TEST
+		System.out.println("Click and hold the left and right mouse button at the same time");
+		TestUtil.sleep(() -> !mouse.isLeftDown() || !mouse.isRightDown());
+		
+		// CLEANUP
+		mouse.stopListening();
+		frame.dispose();
+		DeviceManager.destroy();
+		System.out.println();
+	}
 	
+	@Test
+	public void testMouseListener() {
+		
+		// SETUP
+		DeviceManager.create();
+		MouseListenerTestFrame frame = new MouseListenerTestFrame();
+		DeviceManager.addMouseListener(frame);
+		DeviceManager.getMice().forEach(Mouse::startListening);
+		frame.setVisible(true);
+		
+		// WAIT UNTIL DONE
+		TestUtil.sleep(() -> frame.getCheckList().isAtLeastOneItemUnchecked());
+		
+		// CLEANUP
+		frame.dispose();
+		DeviceManager.getMice().forEach(Mouse::stopListening);
+		DeviceManager.destroy();
+	}
 }

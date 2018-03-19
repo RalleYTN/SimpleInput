@@ -24,7 +24,6 @@
 package de.ralleytn.simple.input.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 
@@ -36,49 +35,15 @@ import de.ralleytn.simple.input.Keyboard;
 import de.ralleytn.simple.input.Mouse;
 
 class DeviceManagerTest {
-
+	
 	@Test
-	public void testGetDeviceByName() {
+	public void testGetMouseByName() {
 		
+		// SETUP
 		DeviceManager.create();
-		
-		List<Gamepad> gamepads = DeviceManager.getGamepads();
-		List<Keyboard> keyboards = DeviceManager.getKeyboards();
 		List<Mouse> mice = DeviceManager.getMice();
-		
-		String gamepadName = null;
-		String keyboardName = null;
-		String mouseName = null;
-		
-		int gamepadsWithThatName = 0;
-		int keyboardsWithThatName = 0;
 		int miceWithThatName = 0;
-		
-		for(int index = 0; index < gamepads.size(); index++) {
-			
-			if(index == 0) {
-				
-				gamepadName = gamepads.get(index).getName();
-				gamepadsWithThatName++;
-				
-			} else if(gamepads.get(index).getName().equals(gamepadName)) {
-				
-				gamepadsWithThatName++;
-			}
-		}
-		
-		for(int index = 0; index < keyboards.size(); index++) {
-			
-			if(index == 0) {
-				
-				keyboardName = keyboards.get(index).getName();
-				keyboardsWithThatName++;
-				
-			} else if(keyboards.get(index).getName().equals(keyboardName)) {
-				
-				keyboardsWithThatName++;
-			}
-		}
+		String mouseName = null;
 		
 		for(int index = 0; index < mice.size(); index++) {
 			
@@ -93,71 +58,161 @@ class DeviceManagerTest {
 			}
 		}
 		
-		List<Gamepad> foundGamepads = DeviceManager.getGamepadsByName(gamepadName);
-		List<Keyboard> foundKeyboards = DeviceManager.getKeyboardsByName(keyboardName);
+		// DO TEST
 		List<Mouse> foundMice = DeviceManager.getMiceByName(mouseName);
-		
-		assertEquals(gamepadsWithThatName, foundGamepads.size());
-		assertEquals(keyboardsWithThatName, foundKeyboards.size());
 		assertEquals(miceWithThatName, foundMice.size());
 		
+		// CLEANUP
 		DeviceManager.destroy();
 	}
 	
 	@Test
-	public void test() {
+	public void testGetKeyboardByName() {
 		
-		try {
+		// SETUP
+		DeviceManager.create();
+		List<Keyboard> keyboards = DeviceManager.getKeyboards();
+		int keyboardsWithThatName = 0;
+		String keyboardName = null;
+		
+		for(int index = 0; index < keyboards.size(); index++) {
 			
-			DeviceManager.create();
-			
-			List<Gamepad> gamepads = DeviceManager.getGamepads();
-			List<Keyboard> keyboards = DeviceManager.getKeyboards();
-			List<Mouse> mice = DeviceManager.getMice();
-			
-			// FIXME
-			// ==== 18.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
-			// getController().getPortNumber() always returns 0. Why?
-			// ====
-			
-			System.out.println("==== " + gamepads.size() + " Gamepad(s) ====");
-			
-			for(Gamepad gamepad : gamepads) {
+			if(index == 0) {
 				
-				System.out.println("Name: " + gamepad.getName());
-				System.out.println("Port Number: " + gamepad.getController().getPortNumber());
-				System.out.println("Button Count: " + gamepad.getButtonCount());
-				System.out.println("Can Rumble: " + gamepad.canRumble());
-				System.out.println();
-			}
-			
-			System.out.println("==== " + keyboards.size() + " Keyboard(s) ====");
-			
-			for(Keyboard keyboard : keyboards) {
+				keyboardName = keyboards.get(index).getName();
+				keyboardsWithThatName++;
 				
-				System.out.println("Name: " + keyboard.getName());
-				System.out.println("Port Number: " + keyboard.getController().getPortNumber());
-				System.out.println();
-			}
-			
-			System.out.println("==== " + mice.size() + " Mouse/Mice ====");
-			
-			for(Mouse mouse : mice) {
+			} else if(keyboards.get(index).getName().equals(keyboardName)) {
 				
-				System.out.println("Name: " + mouse.getName());
-				System.out.println("Port Number: " + mouse.getController().getPortNumber());
-				System.out.println("Button Count: " + mouse.getButtonCount());
-				System.out.println();
+				keyboardsWithThatName++;
 			}
-			
-			System.out.println("====");
-			
-			DeviceManager.destroy();
-			
-		} catch(Exception exception) {
-			
-			exception.printStackTrace();
-			fail(exception.getMessage());
 		}
+		
+		// DO TEST
+		List<Keyboard> foundKeyboards = DeviceManager.getKeyboardsByName(keyboardName);
+		assertEquals(keyboardsWithThatName, foundKeyboards.size());
+		
+		// CLEANUP
+		DeviceManager.destroy();
+	}
+	
+	@Test
+	public void testGetGamepadByName() {
+		
+		// SETUP
+		DeviceManager.create();
+		List<Gamepad> gamepads = DeviceManager.getGamepads();
+		int gamepadsWithThatName = 0;
+		String gamepadName = null;
+		
+		for(int index = 0; index < gamepads.size(); index++) {
+			
+			if(index == 0) {
+				
+				gamepadName = gamepads.get(index).getName();
+				gamepadsWithThatName++;
+				
+			} else if(gamepads.get(index).getName().equals(gamepadName)) {
+				
+				gamepadsWithThatName++;
+			}
+		}
+		
+		// DO TEST
+		List<Gamepad> foundGamepads = DeviceManager.getGamepadsByName(gamepadName);
+		assertEquals(gamepadsWithThatName, foundGamepads.size());
+		
+		// CLEANUP
+		DeviceManager.destroy();
+	}
+	
+	@Test
+	public void testGetMice() {
+		
+		// FIXME
+		// ==== 18.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+		// getController().getPortNumber() always returns 0. Why?
+		// ====
+		
+		DeviceManager.create();
+		List<Mouse> mice = DeviceManager.getMice();
+		System.out.println("==== " + mice.size() + " Mouse/Mice ====");
+		
+		for(int index = 0; index < mice.size(); index++) {
+			
+			if(index != 0) {
+				
+				System.out.println("--");
+			}
+			
+			Mouse mouse = mice.get(index);
+			
+			System.out.println("Name: " + mouse.getName());
+			System.out.println("Port Number: " + mouse.getController().getPortNumber());
+			System.out.println("Button Count: " + mouse.getButtonCount());
+		}
+		
+		DeviceManager.destroy();
+		System.out.println();
+	}
+	
+	@Test
+	public void testGetKeyboards() {
+		
+		// FIXME
+		// ==== 18.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+		// getController().getPortNumber() always returns 0. Why?
+		// ====
+				
+		DeviceManager.create();
+		List<Keyboard> keyboards = DeviceManager.getKeyboards();
+		System.out.println("==== " + keyboards.size() + " Keyboard(s) ====");
+		
+		for(int index = 0; index < keyboards.size(); index++) {
+			
+			if(index != 0) {
+				
+				System.out.println("--");
+			}
+			
+			Keyboard keyboard = keyboards.get(index);
+			
+			System.out.println("Name: " + keyboard.getName());
+			System.out.println("Port Number: " + keyboard.getController().getPortNumber());
+		}
+		
+		DeviceManager.destroy();
+		System.out.println();
+	}
+	
+	@Test
+	public void testGetGamepads() {
+		
+		// FIXME
+		// ==== 18.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+		// getController().getPortNumber() always returns 0. Why?
+		// ====
+				
+		DeviceManager.create();
+		List<Gamepad> gamepads = DeviceManager.getGamepads();
+		System.out.println("==== " + gamepads.size() + " Gamepad(s) ====");
+		
+		for(int index = 0; index < gamepads.size(); index++) {
+			
+			if(index != 0) {
+				
+				System.out.println("--");
+			}
+			
+			Gamepad gamepad = gamepads.get(index);
+			
+			System.out.println("Name: " + gamepad.getName());
+			System.out.println("Port Number: " + gamepad.getController().getPortNumber());
+			System.out.println("Button Count: " + gamepad.getButtonCount());
+			System.out.println("Can Rumble: " + gamepad.canRumble());
+		}
+		
+		DeviceManager.destroy();
+		System.out.println();
 	}
 }
