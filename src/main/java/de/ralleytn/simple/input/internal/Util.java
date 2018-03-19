@@ -21,9 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package de.ralleytn.simple.input.tests;
+package de.ralleytn.simple.input.internal;
 
-class KeyboardTest {
+import java.awt.AWTException;
+import java.awt.Robot;
 
+/**
+ * Contains utility methods for SimpleInput.
+ * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+ * @version 1.0.0
+ * @since 1.0.0
+ */
+public final class Util {
+
+	private static final Robot ROBOT = Util.createRobot();
 	
+	private Util() {}
+	
+	/**
+	 * Sets the cursor position.
+	 * @param x X coordinate in pixel
+	 * @param y Y coordinate in pixel
+	 * @since 1.0.0
+	 */
+	public static final void setCursorPosition(int x, int y) {
+		
+		Util.ROBOT.mouseMove(x, y);
+	}
+	
+	private static final Robot createRobot() {
+		
+		try {
+			
+			return new Robot();
+			
+		} catch(AWTException exception) {
+			
+			return null;
+		}
+	}
 }

@@ -89,9 +89,14 @@ public abstract class Device {
 	
 	/**
 	 * Called continuously in the listening thread.
+	 * The method body is empty.
+	 * Overriding this method will give you more control over the device thread.
 	 * @since 1.0.0
 	 */
-	protected abstract void update();
+	protected void update() {
+		
+		// IMPLEMENTATION IS DONE BY SUB CLASSES
+	}
 	
 	/**
 	 * Sets how long the thread will wait after an update.

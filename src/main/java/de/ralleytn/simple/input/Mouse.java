@@ -27,6 +27,7 @@ import java.awt.MouseInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.ralleytn.simple.input.internal.Util;
 import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Component.Identifier.Axis;
@@ -72,6 +73,17 @@ public class Mouse extends Device {
 				this.buttonCount++;
 			}
 		}
+	}
+	
+	/**
+	 * Sets the mouse cursor position.
+	 * @param x X coordinate in pixel
+	 * @param y Y coordinate in pixel
+	 * @since 1.0.0
+	 */
+	public static void setCursorPosition(int x, int y) {
+		
+		Util.setCursorPosition(x, y);
 	}
 	
 	@Override
@@ -120,9 +132,6 @@ public class Mouse extends Device {
 		
 		return this.listeners.get(index);
 	}
-	
-	@Override
-	protected void update() {}
 
 	@Override
 	protected void onEvent(Event event) {
@@ -131,90 +140,57 @@ public class Mouse extends Device {
 		Identifier id = component.getIdentifier();
 		float value = event.getValue();
 		
-		if(id == Button.LEFT) {
+		if(Button.LEFT.equals(id)) {
 
-			this.leftDown = value == 1.0F;
+			this.leftDown = (value == 1.0F);
+			this.processButtonEvent(id, this.leftDown);
 			
-			if(this.leftDown) {
-				
-				this.listeners.forEach(listener -> listener.onClick(new MouseEvent(this, 0, 0, 0, id)));
-				
-			} else {
-				
-				this.listeners.forEach(listener -> listener.onRelease(new MouseEvent(this, 0, 0, 0, id)));
-			}
+		} else if(Button.RIGHT.equals(id)) {
 			
-		} else if(id == Button.RIGHT) {
+			this.rightDown = (value == 1.0F);
+			this.processButtonEvent(id, this.rightDown);
 			
-			this.rightDown = value == 1.0F;
+		} else if(Button.MIDDLE.equals(id)) {
 			
-			if(this.rightDown) {
-				
-				this.listeners.forEach(listener -> listener.onClick(new MouseEvent(this, 0, 0, 0, id)));
-				
-			} else {
-				
-				this.listeners.forEach(listener -> listener.onRelease(new MouseEvent(this, 0, 0, 0, id)));
-			}
+			this.middleDown = (value == 1.0F);
+			this.processButtonEvent(id, this.middleDown);
 			
-		} else if(id == Button.MIDDLE) {
-			
-			this.middleDown = value == 1.0F;
-			
-			if(this.middleDown) {
-				
-				this.listeners.forEach(listener -> listener.onClick(new MouseEvent(this, 0, 0, 0, id)));
-				
-			} else {
-				
-				this.listeners.forEach(listener -> listener.onRelease(new MouseEvent(this, 0, 0, 0, id)));
-			}
-			
-		} else if(id == Axis.X) {
+		} else if(Axis.X.equals(id)) {
 			
 			float deltaX = event.getValue();
+			this.processMovementEvent(deltaX);
 			
-			if(this.leftDown) {
-				
-				this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, deltaX, 0, 0, Identifier.Button.LEFT)));
-				
-			} else if(this.rightDown) {
-				
-				this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, deltaX, 0, 0, Identifier.Button.RIGHT)));
-				
-			} else if(this.middleDown) {
-				
-				this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, deltaX, 0, 0, Identifier.Button.MIDDLE)));
-				
-			} else {
-				
-				this.listeners.forEach(listener -> listener.onMove(new MouseEvent(this, deltaX, 0, 0, null)));
-			}
-			
-		} else if(id == Axis.Y) {
+		} else if(Axis.Y.equals(id)) {
 			
 			float deltaY = event.getValue();
+			this.processMovementEvent(deltaY);
 			
-			if(this.leftDown) {
-				
-				this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, deltaY, 0, Identifier.Button.LEFT)));
-				
-			} else if(this.rightDown) {
-				
-				this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, deltaY, 0, Identifier.Button.RIGHT)));
-				
-			} else if(this.middleDown) {
-				
-				this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, deltaY, 0, Identifier.Button.MIDDLE)));
-				
-			} else {
-				
-				this.listeners.forEach(listener -> listener.onMove(new MouseEvent(this, 0, deltaY, 0, null)));
-			}
-			
-		} else if(id == Axis.Z) {
+		} else if(Axis.Z.equals(id)) {
 			
 			this.listeners.forEach(listener -> listener.onScroll(new MouseEvent(this, 0, 0, event.getValue(), null)));
+		}
+	}
+	
+	private final void processButtonEvent(Identifier id, boolean button) {
+		
+		if(button) {
+			
+			this.listeners.forEach(listener -> listener.onClick(new MouseEvent(this, 0, 0, 0, id)));
+			
+		} else {
+			
+			this.listeners.forEach(listener -> listener.onRelease(new MouseEvent(this, 0, 0, 0, id)));
+		}
+	}
+	
+	private final void processMovementEvent(float delta) {
+		
+			   if(this.leftDown)   {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Identifier.Button.LEFT)));
+		} else if(this.rightDown)  {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Identifier.Button.RIGHT)));
+		} else if(this.middleDown) {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Identifier.Button.MIDDLE)));
+		} else {
+			
+			this.listeners.forEach(listener -> listener.onMove(new MouseEvent(this, 0, delta, 0, null)));
 		}
 	}
 	
@@ -231,7 +207,7 @@ public class Mouse extends Device {
 	 * @return the X position of the cursor on the screen
 	 * @since 1.0.0
 	 */
-	public int getX() {
+	public static int getX() {
 		
 		return MouseInfo.getPointerInfo().getLocation().x;
 	}
@@ -240,7 +216,7 @@ public class Mouse extends Device {
 	 * @return the Y position of the cursor on the screen
 	 * @since 1.0.0
 	 */
-	public int getY() {
+	public static int getY() {
 		
 		return MouseInfo.getPointerInfo().getLocation().y;
 	}
@@ -276,7 +252,7 @@ public class Mouse extends Device {
 		
 		for(Identifier button : Mouse.VALID_BUTTONS) {
 			
-			if(button == id) {
+			if(button.equals(id)) {
 				
 				return true;
 			}

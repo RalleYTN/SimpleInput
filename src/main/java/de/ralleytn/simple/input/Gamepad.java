@@ -23,13 +23,12 @@
  */
 package de.ralleytn.simple.input;
 
-import java.awt.AWTException;
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Robot;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.ralleytn.simple.input.internal.Util;
 import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Component.Identifier.Button;
@@ -87,7 +86,6 @@ public class Gamepad extends Device {
 	private float cursorSensity;
 	private boolean controlCursorWithAnalogStick;
 	private int analogStickControllingCursor;
-	private Robot robot;
 	
 	private boolean xDown, yDown, aDown, bDown;
 	private boolean selectDown, modeDown, startDown;
@@ -105,16 +103,6 @@ public class Gamepad extends Device {
 		this.rumblers = controller.getRumblers();
 		this.listeners = new ArrayList<>();
 		this.cursorSensity = 4.0F;
-		
-		try {
-			
-			this.robot = new Robot();
-			
-		} catch(AWTException exception) {
-			
-			// ROBOT WILL SIMPLY BE NULL
-			// DO NOTHING!
-		}
 		
 		for(Component component : controller.getComponents()) {
 			
@@ -411,7 +399,7 @@ public class Gamepad extends Device {
 			}
 			
 			Point cursorPosition = MouseInfo.getPointerInfo().getLocation();
-			this.robot.mouseMove((int)(cursorPosition.x + (x * this.cursorSensity)), (int)(cursorPosition.y + (y * this.cursorSensity)));
+			Util.setCursorPosition((int)(cursorPosition.x + (x * this.cursorSensity)), (int)(cursorPosition.y + (y * this.cursorSensity)));
 		}
 	}
 
@@ -422,39 +410,9 @@ public class Gamepad extends Device {
 		Identifier id = component.getIdentifier();
 		float value = event.getValue();
 		
-		if(id == Axis.POV) {
+		if(Axis.POV.equals(id)) {
 			
-			Direction direction = value == 0.25F ? Direction.NORTH :
-				                  value == 0.375F ? Direction.NORTH_EAST :
-				                  value == 0.5F ? Direction.EAST :
-				                  value == 0.625F ? Direction.SOUTH_EAST :
-				                  value == 0.75F ? Direction.SOUTH :
-				                  value == 0.875F ? Direction.SOUTH_WEST :
-				                  value == 1.0F ? Direction.WEST :
-				                  value == 0.125F ? Direction.NORTH_WEST :
-				                  null;
-			
-			if(this.currentPOVDirection != direction) {
-				
-				if(this.currentPOVDirection != null) {
-					
-					this.listeners.forEach(listener -> {
-						
-						listener.onPOVRelease(new GamepadEvent(this, this.currentPOVDirection, -1, id, 0.0F));
-						
-						if(direction != null) {
-							
-							listener.onPOVPress(new GamepadEvent(this, direction, -1, id, 0.0F));
-						}
-					});
-					
-				} else {
-					
-					this.listeners.forEach(listener -> listener.onPOVPress(new GamepadEvent(this, direction, -1, id, 0.0F)));
-				}
-				
-				this.currentPOVDirection = direction;
-			}
+			this.processPOVEvent(id, value);
 			
 		} else if(Gamepad.isButton(id)) {
 			
@@ -469,68 +427,104 @@ public class Gamepad extends Device {
 				this.listeners.forEach(listener -> listener.onButtonPress(gamepadEvent));
 			}
 			
-			       if(id == Button._0  || id == Button.Y)            {this.yDown = value == 1.0F;
-			} else if(id == Button._1  || id == Button.B)            {this.bDown = value == 1.0F;
-			} else if(id == Button._2  || id == Button.A)            {this.aDown = value == 1.0F;
-			} else if(id == Button._3  || id == Button.X)            {this.xDown = value == 1.0F;
-			} else if(id == Button._4  || id == Button.LEFT_THUMB)   {this.l1Down = value == 1.0F;
-			} else if(id == Button._5  || id == Button.RIGHT_THUMB)  {this.r1Down = value == 1.0F;
-			} else if(id == Button._6  || id == Button.LEFT_THUMB2)  {this.l2Down = value == 1.0F;
-			} else if(id == Button._7  || id == Button.RIGHT_THUMB2) {this.r2Down = value == 1.0F;
-			} else if(id == Button._8  || id == Button.SELECT)       {this.selectDown = value == 1.0F;
-			} else if(id == Button._9  || id == Button.START)        {this.startDown = value == 1.0F;
-			} else if(id == Button._10 || id == Button.LEFT_THUMB3)  {this.l3Down = value == 1.0F;
-			} else if(id == Button._11 || id == Button.RIGHT_THUMB3) {this.r3Down = value == 1.0F;
-			} else if(id == Button._12 || id == Button.MODE)         {this.modeDown = value == 1.0F;
-			}
+			this.updateButtonDownList(id, value);
 			       
-		} else if(id == Axis.Y) {
+		} else if(Axis.Y.equals(id)) {
 			
 			this.axisY = Gamepad.isDead(value) ? 0.0F : value;
-			float intensity = Gamepad.getIntensity(this.axisX, this.axisY);
+			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY);
 			
-			if(intensity > this.deadZone) {
-				
-				Direction direction = this.getDirection(value, this.axisX, this.axisY);
-				this.listeners.forEach(listener -> listener.onAnalogStickPush(new GamepadEvent(this, direction, GamepadEvent.ANALOG_STICK_LEFT, id, intensity)));
-			}
-			
-		} else if(id == Axis.X) {
+		} else if(Axis.X.equals(id)) {
 			
 			this.axisX = Gamepad.isDead(value) ? 0.0F : value;
-			float intensity = Gamepad.getIntensity(this.axisX, this.axisY);
+			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY);
 			
-			if(intensity > this.deadZone) {
-				
-				Direction direction = this.getDirection(value, this.axisX, this.axisY);
-				this.listeners.forEach(listener -> listener.onAnalogStickPush(new GamepadEvent(this, direction, GamepadEvent.ANALOG_STICK_LEFT, id, intensity)));
-			}
-			
-		} else if(id == Axis.RZ) {
+		} else if(Axis.RZ.equals(id)) {
 			
 			this.axisRZ = Gamepad.isDead(value) ? 0.0F : value;
-			float intensity = Gamepad.getIntensity(this.axisZ, this.axisRZ);
-			
-			if(intensity > this.deadZone) {
-				
-				Direction direction = this.getDirection(value, this.axisZ, this.axisRZ);
-				this.listeners.forEach(listener -> listener.onAnalogStickPush(new GamepadEvent(this, direction, GamepadEvent.ANALOG_STICK_RIGHT, id, intensity)));
-			}
+			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisZ, this.axisRZ);
 
-		} else if(id == Axis.Z) {
+		} else if(Axis.Z.equals(id)) {
 			
 			this.axisZ = Gamepad.isDead(value) ? 0.0F : value;
-			float intensity = Gamepad.getIntensity(this.axisZ, this.axisRZ);
-			
-			if(intensity > this.deadZone) {
-				
-				Direction direction = this.getDirection(value, this.axisZ, this.axisRZ);
-				this.listeners.forEach(listener -> listener.onAnalogStickPush(new GamepadEvent(this, direction, GamepadEvent.ANALOG_STICK_RIGHT, id, intensity)));
-			}
+			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisZ, this.axisRZ);
 		}
 	}
 	
-	private final Direction getDirection(float value, float x, float y) {
+	private final void updateButtonDownList(Identifier id, float value) {
+		
+		       if(Button._0.equals(id)  || Button.Y.equals(id))            {this.yDown      = (value == 1.0F);
+		} else if(Button._1.equals(id)  || Button.B.equals(id))            {this.bDown      = (value == 1.0F);
+		} else if(Button._2.equals(id)  || Button.A.equals(id))            {this.aDown      = (value == 1.0F);
+		} else if(Button._3.equals(id)  || Button.X.equals(id))            {this.xDown      = (value == 1.0F);
+		} else if(Button._4.equals(id)  || Button.LEFT_THUMB.equals(id))   {this.l1Down     = (value == 1.0F);
+		} else if(Button._5.equals(id)  || Button.RIGHT_THUMB.equals(id))  {this.r1Down     = (value == 1.0F);
+		} else if(Button._6.equals(id)  || Button.LEFT_THUMB2.equals(id))  {this.l2Down     = (value == 1.0F);
+		} else if(Button._7.equals(id)  || Button.RIGHT_THUMB2.equals(id)) {this.r2Down     = (value == 1.0F);
+		} else if(Button._8.equals(id)  || Button.SELECT.equals(id))       {this.selectDown = (value == 1.0F);
+		} else if(Button._9.equals(id)  || Button.START.equals(id))        {this.startDown  = (value == 1.0F);
+		} else if(Button._10.equals(id) || Button.LEFT_THUMB3.equals(id))  {this.l3Down     = (value == 1.0F);
+		} else if(Button._11.equals(id) || Button.RIGHT_THUMB3.equals(id)) {this.r3Down     = (value == 1.0F);
+		} else if(Button._12.equals(id) || Button.MODE.equals(id))         {this.modeDown   = (value == 1.0F);
+		}
+	}
+	
+	private final void processPOVEvent(Identifier id, float value) {
+		
+		Direction direction = Gamepad.getPOVDirection(value);
+		
+		if(this.currentPOVDirection != direction) {
+			
+			if(this.currentPOVDirection != null) {
+				
+				this.listeners.forEach(listener -> {
+					
+					listener.onPOVRelease(new GamepadEvent(this, this.currentPOVDirection, -1, id, 0.0F));
+					
+					if(direction != null) {
+						
+						listener.onPOVPress(new GamepadEvent(this, direction, -1, id, 0.0F));
+					}
+				});
+				
+			} else {
+				
+				this.listeners.forEach(listener -> listener.onPOVPress(new GamepadEvent(this, direction, -1, id, 0.0F)));
+			}
+			
+			this.currentPOVDirection = direction;
+		}
+	}
+	
+	private final void processAnalogStickEvent(int analogStick, float value, Identifier id, float x, float y) {
+		
+		float intensity = Gamepad.getIntensity(x, y);
+		
+		if(intensity > this.deadZone) {
+			
+			Direction direction = Gamepad.getAnalogStickDirection(value, x, y);
+			this.listeners.forEach(listener -> listener.onAnalogStickPush(new GamepadEvent(this, direction, analogStick, id, intensity)));
+		}
+	}
+	
+	private static final Direction getPOVDirection(float value) {
+		
+		Direction direction = null;
+		
+		       if(value == 0.125F) {direction = Direction.NORTH_WEST;
+		} else if(value == 0.25F)  {direction = Direction.NORTH;
+		} else if(value == 0.375F) {direction = Direction.NORTH_EAST;
+		} else if(value == 0.5F)   {direction = Direction.EAST;
+		} else if(value == 0.625F) {direction = Direction.SOUTH_EAST;
+		} else if(value == 0.75F)  {direction = Direction.SOUTH;
+		} else if(value == 0.875F) {direction = Direction.SOUTH_WEST;
+		} else if(value == 1.0F)   {direction = Direction.WEST;
+		}
+		
+		return direction;
+	}
+	
+	private static final Direction getAnalogStickDirection(float value, float x, float y) {
 		
 		Direction direction = null;
 		
@@ -567,7 +561,7 @@ public class Gamepad extends Device {
 		
 		for(Identifier button : Gamepad.VALID_BUTTONS) {
 			
-			if(button == id) {
+			if(id.equals(button)) {
 				
 				return true;
 			}

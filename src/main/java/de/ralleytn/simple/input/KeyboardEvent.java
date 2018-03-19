@@ -69,7 +69,7 @@ public class KeyboardEvent extends DeviceEvent {
 	}
 	
 	private static final int getKeyCode(Identifier id) {
-		
+
 		return 0;
 	}
 }

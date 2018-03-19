@@ -31,9 +31,33 @@ package de.ralleytn.simple.input;
  */
 public class GamepadAdapter implements GamepadListener {
 
-	@Override public void onAnalogStickPush(GamepadEvent event) {}
-	@Override public void onButtonPress(GamepadEvent event) {}
-	@Override public void onButtonRelease(GamepadEvent event) {}
-	@Override public void onPOVPress(GamepadEvent event) {}
-	@Override public void onPOVRelease(GamepadEvent event) {}
+	@Override
+	public void onAnalogStickPush(GamepadEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}
+	
+	@Override
+	public void onButtonPress(GamepadEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}
+	
+	@Override
+	public void onButtonRelease(GamepadEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}
+	
+	@Override
+	public void onPOVPress(GamepadEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}
+	
+	@Override
+	public void onPOVRelease(GamepadEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}
 }

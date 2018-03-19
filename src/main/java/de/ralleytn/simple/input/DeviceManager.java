@@ -69,9 +69,12 @@ public final class DeviceManager {
 			sysPathsField.setAccessible(true);
 			sysPathsField.set(null, null);
 			
-		} catch(IllegalAccessException | NoSuchFieldException | IllegalArgumentException exception) {
+		} catch(NoSuchFieldException | IllegalArgumentException | IllegalAccessException exception) {
 			
-			throw new RuntimeException(exception);
+			// WILL NEVER HAPPEN!
+			// THE FIELD EXISTS!
+			// THE ARGUMENT IS VALID!
+			// AND IT WILL BE MADE ACCESSIBLE BEFORE EDITING!
 		}
 	}
 	

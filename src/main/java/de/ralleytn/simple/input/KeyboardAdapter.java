@@ -31,6 +31,15 @@ package de.ralleytn.simple.input;
  */
 public class KeyboardAdapter implements KeyboardListener {
 
-	@Override public void onKeyPress(KeyboardEvent event) {}
-	@Override public void onKeyRelease(KeyboardEvent event) {}
+	@Override
+	public void onKeyPress(KeyboardEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}
+	
+	@Override
+	public void onKeyRelease(KeyboardEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}
 }

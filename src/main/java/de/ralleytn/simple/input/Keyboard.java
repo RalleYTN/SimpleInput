@@ -107,9 +107,6 @@ public class Keyboard extends Device {
 		
 		return this.downKeys[key];
 	}
-	
-	@Override
-	protected void update() {}
 
 	@Override
 	protected void onEvent(Event event) {

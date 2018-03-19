@@ -31,9 +31,33 @@ package de.ralleytn.simple.input;
  */
 public class MouseAdapter implements MouseListener {
 
-	@Override public void onMove(MouseEvent event) {}
-	@Override public void onDrag(MouseEvent event) {}
-	@Override public void onScroll(MouseEvent event) {}
-	@Override public void onClick(MouseEvent event) {}
-	@Override public void onRelease(MouseEvent event) {}	
+	@Override
+	public void onMove(MouseEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}
+	
+	@Override
+	public void onDrag(MouseEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}
+	
+	@Override
+	public void onScroll(MouseEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}
+	
+	@Override
+	public void onClick(MouseEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}
+	
+	@Override
+	public void onRelease(MouseEvent event) {
+		
+		// IMPLEMENTATION IS DONE IN SUB CLASSES
+	}	
 }

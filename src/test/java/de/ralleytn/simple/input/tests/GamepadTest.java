@@ -23,6 +23,8 @@
  */
 package de.ralleytn.simple.input.tests;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,7 @@ import de.ralleytn.simple.input.Direction;
 import de.ralleytn.simple.input.Gamepad;
 import de.ralleytn.simple.input.GamepadEvent;
 import de.ralleytn.simple.input.GamepadListener;
+import de.ralleytn.simple.input.Mouse;
 
 // TODO
 // ==== 18.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
@@ -55,6 +58,84 @@ class GamepadTest {
 	};
 	
 	private final CheckList checkList = new CheckList();
+	
+	@Test
+	public void testCursorControl() {
+		
+		DeviceManager.create();
+		List<Gamepad> gamepads = DeviceManager.getGamepads();
+		Gamepad gamepad = gamepads.get(0);
+		gamepad.startListening();
+		gamepad.setAnalogStickControllingCursor(GamepadEvent.ANALOG_STICK_LEFT);
+		gamepad.setControlCursorWithAnalogStick(true);
+		gamepad.setCursorSensity(5.0F);
+		System.out.println("==== TEST cursor control ====");
+		System.out.println("Left Analog Stick");
+
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		Mouse.setCursorPosition(screenSize.width / 2, screenSize.height / 2);
+		
+		JFrame frame = new JFrame();
+		frame.setSize(100, 100);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setLocation((int)(Math.random() * (screenSize.width - 100)), (int)(Math.random() * (screenSize.height - 100)));
+		frame.setVisible(true);
+		
+		while(!frame.getBounds().contains(Mouse.getX(), Mouse.getY())) {
+			
+			try {
+				
+				Thread.sleep(10);
+				
+			} catch(InterruptedException e) {}
+		}
+		
+		frame.setLocation((int)(Math.random() * (screenSize.width - 100)), (int)(Math.random() * (screenSize.height - 100)));
+		Mouse.setCursorPosition(screenSize.width / 2, screenSize.height / 2);
+		System.out.println("Inverted");
+		gamepad.setCursorSensity(-5.0F);
+		
+		while(!frame.getBounds().contains(Mouse.getX(), Mouse.getY())) {
+			
+			try {
+				
+				Thread.sleep(10);
+				
+			} catch(InterruptedException e) {}
+		}
+		
+		frame.setLocation((int)(Math.random() * (screenSize.width - 100)), (int)(Math.random() * (screenSize.height - 100)));
+		Mouse.setCursorPosition(screenSize.width / 2, screenSize.height / 2);
+		System.out.println("Right Analog Stick");
+		gamepad.setCursorSensity(5.0F);
+		gamepad.setAnalogStickControllingCursor(GamepadEvent.ANALOG_STICK_RIGHT);
+		
+		while(!frame.getBounds().contains(Mouse.getX(), Mouse.getY())) {
+			
+			try {
+				
+				Thread.sleep(10);
+				
+			} catch(InterruptedException e) {}
+		}
+		
+		frame.setLocation((int)(Math.random() * (screenSize.width - 100)), (int)(Math.random() * (screenSize.height - 100)));
+		Mouse.setCursorPosition(screenSize.width / 2, screenSize.height / 2);
+		System.out.println("Inverted");
+		gamepad.setCursorSensity(-5.0F);
+		
+		while(!frame.getBounds().contains(Mouse.getX(), Mouse.getY())) {
+			
+			try {
+				
+				Thread.sleep(10);
+				
+			} catch(InterruptedException e) {}
+		}
+		
+		gamepad.stopListening();
+		DeviceManager.destroy();
+	}
 
 	@Test
 	public void testIsDown() {

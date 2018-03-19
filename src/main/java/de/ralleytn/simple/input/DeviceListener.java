@@ -36,5 +36,11 @@ public interface DeviceListener {
 	 * Not guaranteed to work!
 	 * @since 1.0.0
 	 */
-	public default void onRemove() {}
+	public default void onRemove() {
+		
+		// FIXME
+		// ==== 19.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+		// This method will never be called because the ControllerListener from jinput doesn't work
+		// ====
+	}
 }
