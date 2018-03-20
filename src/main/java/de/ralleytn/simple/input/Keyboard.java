@@ -26,6 +26,7 @@ package de.ralleytn.simple.input;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.java.games.input.Component.Identifier;
 import net.java.games.input.Controller;
 import net.java.games.input.Event;
 
@@ -49,6 +50,7 @@ public class Keyboard extends Device {
 		super(controller);
 		
 		this.listeners = new ArrayList<>();
+		this.downKeys = new boolean[KeyboardEvent.KEY_SINGLE_QUOTE + 1];
 	}
 	
 	@Override
@@ -111,6 +113,8 @@ public class Keyboard extends Device {
 	@Override
 	protected void onEvent(Event event) {
 		
-		
+		Identifier id = event.getComponent().getIdentifier();
+		float value = event.getValue();
+		System.out.println(id);
 	}
 }

@@ -23,7 +23,31 @@
  */
 package de.ralleytn.simple.input.tests;
 
+import javax.swing.JFrame;
+
+import org.junit.jupiter.api.Test;
+
+import de.ralleytn.simple.input.DeviceManager;
+import de.ralleytn.simple.input.Keyboard;
+
 class KeyboardTest {
 
-	
+	@Test
+	public void testKeyboardListener() {
+		
+		/*
+		DeviceManager.create();
+		DeviceManager.getKeyboards().forEach(Keyboard::startListening);
+		
+		JFrame frame = new JFrame();
+		frame.setSize(300, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		
+		TestUtil.sleep(() -> true);
+		DeviceManager.getKeyboards().forEach(Keyboard::stopListening);
+		DeviceManager.destroy();
+		*/
+	}
 }
