@@ -35,12 +35,26 @@ import de.ralleytn.simple.input.Gamepad;
 import de.ralleytn.simple.input.GamepadEvent;
 import de.ralleytn.simple.input.Mouse;
 
-// TODO
-// ==== 18.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
-// If someone could run this test with a XBox gamepad and send me the results, that would be nice!
-// ====
-
 class GamepadTest {
+	
+	private static final void waitUntilAllAreDown(Gamepad gamepad, int[] buttons) {
+	
+		TestUtil.sleep(() -> {
+			
+			boolean allDown = true;
+			
+			for(int button : buttons) {
+				
+				if(!gamepad.isButtonDown(button)) {
+					
+					allDown = false;
+					break;
+				}
+			}
+			
+			return allDown;
+		});
+	}
 	
 	private static final void doCursorControlTest(JFrame frame) {
 		
@@ -102,15 +116,15 @@ class GamepadTest {
 
 		// TEST 1
 		System.out.println("Press and hold A, B, X, Y at the same time");
-		TestUtil.sleep(() -> !gamepad.isADown() || !gamepad.isBDown() || !gamepad.isXDown() || !gamepad.isYDown());
+		waitUntilAllAreDown(gamepad, new int[] {GamepadEvent.BUTTON_A, GamepadEvent.BUTTON_B, GamepadEvent.BUTTON_X, GamepadEvent.BUTTON_Y});
 		
 		// TEST 2
 		System.out.println("Press and hold L1, L2, R1, R2 at the same time");
-		TestUtil.sleep(() -> !gamepad.isR1Down() || !gamepad.isR2Down() || !gamepad.isL1Down() || !gamepad.isL2Down());
+		waitUntilAllAreDown(gamepad, new int[] {GamepadEvent.BUTTON_R1, GamepadEvent.BUTTON_R2, GamepadEvent.BUTTON_L1, GamepadEvent.BUTTON_L2});
 		
 		// TEST 3
 		System.out.println("Press and hold START, SELECT, R3, L3 at the same time");
-		TestUtil.sleep(() -> !gamepad.isR3Down() || !gamepad.isL3Down() || !gamepad.isStartDown() || !gamepad.isSelectDown());
+		waitUntilAllAreDown(gamepad, new int[] {GamepadEvent.BUTTON_L3, GamepadEvent.BUTTON_R3, GamepadEvent.BUTTON_START, GamepadEvent.BUTTON_SELECT});
 		
 		// CLEANUP
 		gamepad.stopListening();

@@ -59,20 +59,21 @@ public class Gamepad extends Device {
 	private static final Identifier[] VALID_BUTTONS = {
 			
 		// PC/PlayStation | XBox
-		Button._0, Button.Y,
-		Button._1, Button.B,
-		Button._2, Button.A,
-		Button._3, Button.X,
-		Button._4, Button.LEFT_THUMB,
-		Button._5, Button.RIGHT_THUMB,
-		Button._6, Button.LEFT_THUMB2,
-		Button._7, Button.RIGHT_THUMB2,
-		Button._8, Button.SELECT,
-		Button._9, Button.START,
+		Button._0,  Button.Y,
+		Button._1,  Button.B,
+		Button._2,  Button.A,
+		Button._3,  Button.X,
+		Button._4,  Button.LEFT_THUMB,
+		Button._5,  Button.RIGHT_THUMB,
+		Button._6,  Button.LEFT_THUMB2,
+		Button._7,  Button.RIGHT_THUMB2,
+		Button._8,  Button.SELECT,
+		Button._9,  Button.START,
 		Button._10, Button.LEFT_THUMB3,
 		Button._11, Button.RIGHT_THUMB3,
 		Button._12, Button.MODE
 	};
+	private static final int MAX_NUMBER_OF_BUTTONS = Gamepad.VALID_BUTTONS.length / 2;
 	
 	private Rumbler[] rumblers;
 	private List<GamepadListener> listeners;
@@ -86,11 +87,7 @@ public class Gamepad extends Device {
 	private float cursorSensity;
 	private boolean controlCursorWithAnalogStick;
 	private int analogStickControllingCursor;
-	
-	private boolean xDown, yDown, aDown, bDown;
-	private boolean selectDown, modeDown, startDown;
-	private boolean l1Down, l2Down, l3Down;
-	private boolean r1Down, r2Down, r3Down;
+	private boolean[] buttonsThatAreDown;
 	
 	/**
 	 * @param controller the {@linkplain Controller} that should be wrapped
@@ -100,6 +97,7 @@ public class Gamepad extends Device {
 		
 		super(controller);
 
+		this.buttonsThatAreDown = new boolean[Gamepad.MAX_NUMBER_OF_BUTTONS];
 		this.rumblers = controller.getRumblers();
 		this.listeners = new ArrayList<>();
 		this.cursorSensity = 4.0F;
@@ -195,122 +193,16 @@ public class Gamepad extends Device {
 		
 		return this.buttonCount;
 	}
-	
+
 	/**
-	 * @return {@code true} if the X/4 button is currently down, else {@code false}
+	 * 
+	 * @param button
+	 * @return
 	 * @since 1.0.0
 	 */
-	public boolean isXDown() {
+	public boolean isButtonDown(int button) {
 		
-		return this.xDown;
-	}
-	
-	/**
-	 * @return {@code true} if the Y/1 button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isYDown() {
-		
-		return this.yDown;
-	}
-	
-	/**
-	 * @return {@code true} if the A/3 button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isADown() {
-		
-		return this.aDown;
-	}
-	
-	/**
-	 * @return {@code true} if the X/2 button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isBDown() {
-		
-		return this.bDown;
-	}
-	
-	/**
-	 * @return {@code true} if the L1 button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isL1Down() {
-		
-		return this.l1Down;
-	}
-	
-	/**
-	 * @return {@code true} if the L2 button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isL2Down() {
-		
-		return this.l2Down;
-	}
-	
-	/**
-	 * @return {@code true} if the L3 button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isL3Down() {
-		
-		return this.l3Down;
-	}
-	
-	/**
-	 * @return {@code true} if the R1 button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isR1Down() {
-		
-		return this.r1Down;
-	}
-	
-	/**
-	 * @return {@code true} if the R2 button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isR2Down() {
-		
-		return this.r2Down;
-	}
-	
-	/**
-	 * @return {@code true} if the R3 button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isR3Down() {
-		
-		return this.r3Down;
-	}
-	
-	/**
-	 * @return {@code true} if the MODE button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isModeDown() {
-		
-		return this.modeDown;
-	}
-	
-	/**
-	 * @return {@code true} if the SELECT button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isSelectDown() {
-		
-		return this.selectDown;
-	}
-	
-	/**
-	 * @return {@code true} if the START button is currently down, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isStartDown() {
-		
-		return this.startDown;
+		return this.buttonsThatAreDown[button];
 	}
 	
 	/**
@@ -427,7 +319,7 @@ public class Gamepad extends Device {
 				this.listeners.forEach(listener -> listener.onButtonPress(gamepadEvent));
 			}
 			
-			this.updateButtonDownList(id, value);
+			this.buttonsThatAreDown[Util.getGamepadButtonByIdentifier(id)] = (value == 1.0F);
 			       
 		} else if(Axis.Y.equals(id)) {
 			
@@ -439,33 +331,15 @@ public class Gamepad extends Device {
 			this.axisX = Gamepad.isDead(value) ? 0.0F : value;
 			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY);
 			
-		} else if(Axis.RZ.equals(id)) {
+		} else if(Axis.RZ.equals(id) || Axis.RX.equals(id)) {
 			
 			this.axisRZ = Gamepad.isDead(value) ? 0.0F : value;
 			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisZ, this.axisRZ);
 
-		} else if(Axis.Z.equals(id)) {
+		} else if(Axis.Z.equals(id) || Axis.RY.equals(id)) {
 			
 			this.axisZ = Gamepad.isDead(value) ? 0.0F : value;
 			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisZ, this.axisRZ);
-		}
-	}
-	
-	private final void updateButtonDownList(Identifier id, float value) {
-		
-		       if(Button._0.equals(id)  || Button.Y.equals(id))            {this.yDown      = (value == 1.0F);
-		} else if(Button._1.equals(id)  || Button.B.equals(id))            {this.bDown      = (value == 1.0F);
-		} else if(Button._2.equals(id)  || Button.A.equals(id))            {this.aDown      = (value == 1.0F);
-		} else if(Button._3.equals(id)  || Button.X.equals(id))            {this.xDown      = (value == 1.0F);
-		} else if(Button._4.equals(id)  || Button.LEFT_THUMB.equals(id))   {this.l1Down     = (value == 1.0F);
-		} else if(Button._5.equals(id)  || Button.RIGHT_THUMB.equals(id))  {this.r1Down     = (value == 1.0F);
-		} else if(Button._6.equals(id)  || Button.LEFT_THUMB2.equals(id))  {this.l2Down     = (value == 1.0F);
-		} else if(Button._7.equals(id)  || Button.RIGHT_THUMB2.equals(id)) {this.r2Down     = (value == 1.0F);
-		} else if(Button._8.equals(id)  || Button.SELECT.equals(id))       {this.selectDown = (value == 1.0F);
-		} else if(Button._9.equals(id)  || Button.START.equals(id))        {this.startDown  = (value == 1.0F);
-		} else if(Button._10.equals(id) || Button.LEFT_THUMB3.equals(id))  {this.l3Down     = (value == 1.0F);
-		} else if(Button._11.equals(id) || Button.RIGHT_THUMB3.equals(id)) {this.r3Down     = (value == 1.0F);
-		} else if(Button._12.equals(id) || Button.MODE.equals(id))         {this.modeDown   = (value == 1.0F);
 		}
 	}
 	

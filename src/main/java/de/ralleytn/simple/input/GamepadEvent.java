@@ -23,6 +23,7 @@
  */
 package de.ralleytn.simple.input;
 
+import de.ralleytn.simple.input.internal.Util;
 import net.java.games.input.Component.Identifier;
 
 /**
@@ -170,20 +171,7 @@ public class GamepadEvent extends DeviceEvent {
 	 */
 	public final int getButton() {
 		
-		return this.id == Identifier.Button._0 || this.id == Identifier.Button.Y ? GamepadEvent.BUTTON_Y :
-			   this.id == Identifier.Button._1 || this.id == Identifier.Button.B ? GamepadEvent.BUTTON_B :
-			   this.id == Identifier.Button._2 || this.id == Identifier.Button.A ? GamepadEvent.BUTTON_A :
-			   this.id == Identifier.Button._3 || this.id == Identifier.Button.X ? GamepadEvent.BUTTON_X :
-			   this.id == Identifier.Button._4 || this.id == Identifier.Button.LEFT_THUMB ? GamepadEvent.BUTTON_L1 :
-			   this.id == Identifier.Button._5 || this.id == Identifier.Button.RIGHT_THUMB ? GamepadEvent.BUTTON_R1 :
-			   this.id == Identifier.Button._6 || this.id == Identifier.Button.LEFT_THUMB2 ? GamepadEvent.BUTTON_L2 :
-			   this.id == Identifier.Button._7 || this.id == Identifier.Button.RIGHT_THUMB2 ? GamepadEvent.BUTTON_R2 :
-			   this.id == Identifier.Button._8 || this.id == Identifier.Button.SELECT ? GamepadEvent.BUTTON_SELECT :
-			   this.id == Identifier.Button._9 || this.id == Identifier.Button.START ? GamepadEvent.BUTTON_START :
-			   this.id == Identifier.Button._10 || this.id == Identifier.Button.LEFT_THUMB3 ? GamepadEvent.BUTTON_L3 :
-			   this.id == Identifier.Button._11 || this.id == Identifier.Button.RIGHT_THUMB3 ? GamepadEvent.BUTTON_R3 :
-			   this.id == Identifier.Button._12 || this.id == Identifier.Button.MODE ? GamepadEvent.BUTTON_MODE :
-			   -1;
+		return Util.getGamepadButtonByIdentifier(this.id);
 	}
 	
 	/**

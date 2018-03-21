@@ -26,6 +26,7 @@ package de.ralleytn.simple.input.internal;
 import java.awt.AWTException;
 import java.awt.Robot;
 
+import de.ralleytn.simple.input.GamepadEvent;
 import de.ralleytn.simple.input.KeyboardEvent;
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Component.Identifier.Key;
@@ -41,6 +42,30 @@ public final class Util {
 	private static final Robot ROBOT = Util.createRobot();
 	
 	private Util() {}
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @since 1.0.0
+	 */
+	public static final int getGamepadButtonByIdentifier(Identifier id) {
+		
+		return id == Identifier.Button._0  || id == Identifier.Button.Y            ? GamepadEvent.BUTTON_Y :
+			   id == Identifier.Button._1  || id == Identifier.Button.B            ? GamepadEvent.BUTTON_B :
+			   id == Identifier.Button._2  || id == Identifier.Button.A            ? GamepadEvent.BUTTON_A :
+			   id == Identifier.Button._3  || id == Identifier.Button.X            ? GamepadEvent.BUTTON_X :
+			   id == Identifier.Button._4  || id == Identifier.Button.LEFT_THUMB   ? GamepadEvent.BUTTON_L1 :
+			   id == Identifier.Button._5  || id == Identifier.Button.RIGHT_THUMB  ? GamepadEvent.BUTTON_R1 :
+			   id == Identifier.Button._6  || id == Identifier.Button.LEFT_THUMB2  ? GamepadEvent.BUTTON_L2 :
+			   id == Identifier.Button._7  || id == Identifier.Button.RIGHT_THUMB2 ? GamepadEvent.BUTTON_R2 :
+			   id == Identifier.Button._8  || id == Identifier.Button.SELECT       ? GamepadEvent.BUTTON_SELECT :
+			   id == Identifier.Button._9  || id == Identifier.Button.START        ? GamepadEvent.BUTTON_START :
+			   id == Identifier.Button._10 || id == Identifier.Button.LEFT_THUMB3  ? GamepadEvent.BUTTON_L3 :
+			   id == Identifier.Button._11 || id == Identifier.Button.RIGHT_THUMB3 ? GamepadEvent.BUTTON_R3 :
+			   id == Identifier.Button._12 || id == Identifier.Button.MODE         ? GamepadEvent.BUTTON_MODE :
+			   -1;
+	}
 	
 	/**
 	 * @param id the jInput identifier
@@ -88,7 +113,12 @@ public final class Util {
 		Util.ROBOT.mouseMove(x, y);
 	}
 	
-	private static final Robot createRobot() {
+	/**
+	 * 
+	 * @return
+	 * @since 1.0.0
+	 */
+	public static final Robot createRobot() {
 		
 		try {
 			

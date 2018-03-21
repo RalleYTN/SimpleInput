@@ -156,7 +156,7 @@ public final class DeviceManager {
 				DeviceManager.CONTROLLERS.add(controller);
 				
 			} else if(type == Type.GAMEPAD || type == Type.STICK) {
-				
+
 				DeviceManager.DEVICES.add(new Gamepad(controller));
 				DeviceManager.CONTROLLERS.add(controller);
 			}
