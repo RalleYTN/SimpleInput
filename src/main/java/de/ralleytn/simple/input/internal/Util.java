@@ -26,9 +26,14 @@ package de.ralleytn.simple.input.internal;
 import java.awt.AWTException;
 import java.awt.Robot;
 
+import de.ralleytn.simple.input.Direction;
 import de.ralleytn.simple.input.GamepadEvent;
 import de.ralleytn.simple.input.KeyboardEvent;
+import net.java.games.input.Controller;
+import net.java.games.input.Controller.Type;
+import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
+import net.java.games.input.Component.Identifier.Axis;
 import net.java.games.input.Component.Identifier.Key;
 
 /**
@@ -42,6 +47,122 @@ public final class Util {
 	private static final Robot ROBOT = Util.createRobot();
 	
 	private Util() {}
+	
+	/**
+	 * 
+	 * @param controller
+	 * @return
+	 * @since 1.0.0
+	 */
+	public static final boolean isXInput(Controller controller) {
+		
+		Type type = controller.getType();
+		
+		if(Type.GAMEPAD.equals(type)) {
+			
+			Component[] components = controller.getComponents();
+			boolean hasXAxis = false;
+			boolean hasYAxis = false;
+			boolean hasZAxis = false;
+			boolean hasRXAxis = false;
+			boolean hasRYAxis = false;
+			boolean hasPOV = false;
+			
+			for(Component component : components) {
+				
+				Identifier id = component.getIdentifier();
+				
+					   if(Axis.X.equals(id))   {hasXAxis = true;
+				} else if(Axis.Y.equals(id))   {hasYAxis = true;
+				} else if(Axis.RX.equals(id))  {hasRXAxis = true;
+				} else if(Axis.RY.equals(id))  {hasRYAxis = true;
+				} else if(Axis.Z.equals(id))   {hasZAxis = true;
+				} else if(Axis.POV.equals(id)) {hasPOV = true;
+				}
+			}
+			
+			return hasPOV && hasRXAxis && hasRYAxis && hasXAxis && hasYAxis && hasZAxis;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 * @since 1.0.0
+	 */
+	public static final float getIntensity(float x, float y) {
+		
+		double velocity = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+	    return (float)(velocity > 1.0F ? 1.0F : velocity);
+	}
+	
+	/**
+	 * 
+	 * @param value
+	 * @return
+	 * @since 1.0.0
+	 */
+	public static final boolean isDead(float value) {
+		
+		return value < 0.1F && value > -0.1F;
+	}
+	
+	/**
+	 * 
+	 * @param value
+	 * @return
+	 * @since 1.0.0
+	 */
+	public static final Direction getPOVDirection(float value) {
+		
+		Direction direction = null;
+		
+		       if(value == 0.125F) {direction = Direction.NORTH_WEST;
+		} else if(value == 0.25F)  {direction = Direction.NORTH;
+		} else if(value == 0.375F) {direction = Direction.NORTH_EAST;
+		} else if(value == 0.5F)   {direction = Direction.EAST;
+		} else if(value == 0.625F) {direction = Direction.SOUTH_EAST;
+		} else if(value == 0.75F)  {direction = Direction.SOUTH;
+		} else if(value == 0.875F) {direction = Direction.SOUTH_WEST;
+		} else if(value == 1.0F)   {direction = Direction.WEST;
+		}
+		
+		return direction;
+	}
+	
+	/**
+	 * 
+	 * @param value
+	 * @param x
+	 * @param y
+	 * @return
+	 * @since 1.0.0
+	 */
+	public static final Direction getAnalogStickDirection(float value, float x, float y) {
+		
+		Direction direction = null;
+		
+		if(value != 0.0F) {
+			
+			double angle = Math.toDegrees(Math.atan2(y, x));
+			
+			       if(angle == -90.0F) {direction = Direction.NORTH;
+			} else if(angle == 0.0F)   {direction = Direction.EAST;
+			} else if(angle == 180.0F) {direction = Direction.WEST;
+			} else if(angle == 90.0F)  {direction = Direction.SOUTH;
+			} else if(angle < -90.0F)  {direction = Direction.NORTH_WEST;
+			} else if(angle < 0.0F)    {direction = Direction.NORTH_EAST;
+			} else if(angle > 90.0F)   {direction = Direction.SOUTH_WEST;
+			} else if(angle > 0.0F)    {direction = Direction.SOUTH_EAST;
+			}
+		}
+		
+		return direction;
+	}
 	
 	/**
 	 * 

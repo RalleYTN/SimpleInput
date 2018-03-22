@@ -48,7 +48,7 @@ import net.java.games.input.Rumbler;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class Gamepad extends Device {
+public abstract class Gamepad extends Device {
 	
 	/**
 	 * The maximum value the dead zone can have.
@@ -75,25 +75,21 @@ public class Gamepad extends Device {
 	};
 	private static final int MAX_NUMBER_OF_BUTTONS = Gamepad.VALID_BUTTONS.length / 2;
 	
-	private Rumbler[] rumblers;
-	private List<GamepadListener> listeners;
-	private Direction currentPOVDirection;
-	private int buttonCount;
-	private float axisY;
-	private float axisX;
-	private float axisRZ; // Y for right analog stick
-	private float axisZ; // X for right analog stick
-	private float deadZone;
-	private float cursorSensity;
-	private boolean controlCursorWithAnalogStick;
-	private int analogStickControllingCursor;
-	private boolean[] buttonsThatAreDown;
+	protected Rumbler[] rumblers;
+	protected List<GamepadListener> listeners;
+	protected Direction currentPOVDirection;
+	protected int buttonCount;
+	protected float axisY;
+	protected float axisX;
+	protected float axisRZ; // Y for right analog stick
+	protected float axisZ; // X for right analog stick
+	protected float deadZone;
+	protected float cursorSensity;
+	protected boolean controlCursorWithAnalogStick;
+	protected int analogStickControllingCursor;
+	protected boolean[] buttonsThatAreDown;
 	
-	/**
-	 * @param controller the {@linkplain Controller} that should be wrapped
-	 * @since 1.0.0
-	 */
-	public Gamepad(Controller controller) {
+	Gamepad(Controller controller) {
 		
 		super(controller);
 
@@ -294,6 +290,8 @@ public class Gamepad extends Device {
 			Util.setCursorPosition((int)(cursorPosition.x + (x * this.cursorSensity)), (int)(cursorPosition.y + (y * this.cursorSensity)));
 		}
 	}
+	
+	protected abstract void processInput(Identifier id, float value);
 
 	@Override
 	protected void onEvent(Event event) {
@@ -323,29 +321,29 @@ public class Gamepad extends Device {
 			       
 		} else if(Axis.Y.equals(id)) {
 			
-			this.axisY = Gamepad.isDead(value) ? 0.0F : value;
+			this.axisY = Util.isDead(value) ? 0.0F : value;
 			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY);
 			
 		} else if(Axis.X.equals(id)) {
 			
-			this.axisX = Gamepad.isDead(value) ? 0.0F : value;
+			this.axisX = Util.isDead(value) ? 0.0F : value;
 			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY);
 			
 		} else if(Axis.RZ.equals(id) || Axis.RX.equals(id)) {
 			
-			this.axisRZ = Gamepad.isDead(value) ? 0.0F : value;
+			this.axisRZ = Util.isDead(value) ? 0.0F : value;
 			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisZ, this.axisRZ);
 
 		} else if(Axis.Z.equals(id) || Axis.RY.equals(id)) {
 			
-			this.axisZ = Gamepad.isDead(value) ? 0.0F : value;
+			this.axisZ = Util.isDead(value) ? 0.0F : value;
 			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisZ, this.axisRZ);
 		}
 	}
 	
-	private final void processPOVEvent(Identifier id, float value) {
+	protected final void processPOVEvent(Identifier id, float value) {
 		
-		Direction direction = Gamepad.getPOVDirection(value);
+		Direction direction = Util.getPOVDirection(value);
 		
 		if(this.currentPOVDirection != direction) {
 			
@@ -370,65 +368,15 @@ public class Gamepad extends Device {
 		}
 	}
 	
-	private final void processAnalogStickEvent(int analogStick, float value, Identifier id, float x, float y) {
+	protected final void processAnalogStickEvent(int analogStick, float value, Identifier id, float x, float y) {
 		
-		float intensity = Gamepad.getIntensity(x, y);
+		float intensity = Util.getIntensity(x, y);
 		
 		if(intensity > this.deadZone) {
 			
-			Direction direction = Gamepad.getAnalogStickDirection(value, x, y);
+			Direction direction = Util.getAnalogStickDirection(value, x, y);
 			this.listeners.forEach(listener -> listener.onAnalogStickPush(new GamepadEvent(this, direction, analogStick, id, intensity)));
 		}
-	}
-	
-	private static final Direction getPOVDirection(float value) {
-		
-		Direction direction = null;
-		
-		       if(value == 0.125F) {direction = Direction.NORTH_WEST;
-		} else if(value == 0.25F)  {direction = Direction.NORTH;
-		} else if(value == 0.375F) {direction = Direction.NORTH_EAST;
-		} else if(value == 0.5F)   {direction = Direction.EAST;
-		} else if(value == 0.625F) {direction = Direction.SOUTH_EAST;
-		} else if(value == 0.75F)  {direction = Direction.SOUTH;
-		} else if(value == 0.875F) {direction = Direction.SOUTH_WEST;
-		} else if(value == 1.0F)   {direction = Direction.WEST;
-		}
-		
-		return direction;
-	}
-	
-	private static final Direction getAnalogStickDirection(float value, float x, float y) {
-		
-		Direction direction = null;
-		
-		if(value != 0.0F) {
-			
-			double angle = Math.toDegrees(Math.atan2(y, x));
-			
-			       if(angle == -90.0F) {direction = Direction.NORTH;
-			} else if(angle == 0.0F)   {direction = Direction.EAST;
-			} else if(angle == 180.0F) {direction = Direction.WEST;
-			} else if(angle == 90.0F)  {direction = Direction.SOUTH;
-			} else if(angle < -90.0F)  {direction = Direction.NORTH_WEST;
-			} else if(angle < 0.0F)    {direction = Direction.NORTH_EAST;
-			} else if(angle > 90.0F)   {direction = Direction.SOUTH_WEST;
-			} else if(angle > 0.0F)    {direction = Direction.SOUTH_EAST;
-			}
-		}
-		
-		return direction;
-	}
-
-	private static final float getIntensity(float x, float y) {
-		
-		double velocity = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-	    return (float)(velocity > 1.0F ? 1.0F : velocity);
-	}
-	
-	private static final boolean isDead(float value) {
-		
-		return value < 0.1F && value > -0.1F;
 	}
 	
 	private static final boolean isButton(Identifier id) {

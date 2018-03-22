@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.ralleytn.simple.input.internal.Util;
 import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
 import net.java.games.input.ControllerEnvironment;
@@ -42,12 +43,22 @@ import net.java.games.input.ControllerListener;
  */
 public final class DeviceManager {
 
-	private static List<Controller> CONTROLLERS;
 	private static ControllerEnvironment ENVIRONMENT;
 	private static List<Device> DEVICES;
 	private static ControllerListener CONTROLLER_LISTENER;
 	
 	private DeviceManager() {}
+	
+	private static final void addDevice(Controller controller) {
+		
+		Type type = controller.getType();
+		
+			   if(type == Type.MOUSE)    {DeviceManager.DEVICES.add(new Mouse(controller));
+		} else if(type == Type.KEYBOARD) {DeviceManager.DEVICES.add(new Keyboard(controller));
+		} else if(type == Type.STICK)    {DeviceManager.DEVICES.add(new DirectInputGamepad(controller));
+		} else if(type == Type.GAMEPAD)  {DeviceManager.DEVICES.add(Util.isXInput(controller) ? new XInputGamepad(controller) : new DirectInputGamepad(controller));
+		}
+	}
 	
 	/**
 	 * Sets the native directory dynamically.
@@ -85,81 +96,14 @@ public final class DeviceManager {
 	 */
 	public static final void create() {
 		
-		DeviceManager.CONTROLLERS = new ArrayList<>();
 		DeviceManager.DEVICES = new ArrayList<>();
-		DeviceManager.CONTROLLER_LISTENER = new ControllerListener() {
-			
-			// FIXME
-			// WHY DOES A CONTROLLER LISTENER EXIST IF IT DOESN'T WORK!?
-			
-			@Override
-			public void controllerRemoved(ControllerEvent event) {
-				
-				// System.out.println("Removed " + event.getController().getName());
-				
-				List<Device> devices = new ArrayList<>();
-				DeviceManager.DEVICES.forEach(device -> {
-
-					if(device.getController() == event.getController()) {
-						
-						device.remove();
-						
-					} else {
-						
-						devices.add(device);
-					}
-				});
-				
-				DeviceManager.DEVICES = devices;
-			}
-			
-			@Override
-			public void controllerAdded(ControllerEvent event) {
-				
-				// System.out.println("Added " + event.getController().getName());
-				
-				Controller controller = event.getController();
-				Type type = controller.getType();
-				
-				if(type == Type.MOUSE) {
-					
-					DeviceManager.DEVICES.add(new Mouse(controller));
-					DeviceManager.CONTROLLERS.add(controller);
-					
-				} else if(type == Type.KEYBOARD) {
-					
-					DeviceManager.DEVICES.add(new Keyboard(controller));
-					DeviceManager.CONTROLLERS.add(controller);
-					
-				} else if(type == Type.GAMEPAD || type == Type.STICK) {
-					
-					DeviceManager.DEVICES.add(new Gamepad(controller));
-					DeviceManager.CONTROLLERS.add(controller);
-				}
-			}
-		};
+		DeviceManager.CONTROLLER_LISTENER = new Adapter();
 		DeviceManager.ENVIRONMENT = ControllerEnvironment.getDefaultEnvironment();
 		DeviceManager.ENVIRONMENT.addControllerListener(DeviceManager.CONTROLLER_LISTENER);
 		
 		for(Controller controller : DeviceManager.ENVIRONMENT.getControllers()) {
 			
-			Type type = controller.getType();
-			
-			if(type == Type.MOUSE) {
-				
-				DeviceManager.DEVICES.add(new Mouse(controller));
-				DeviceManager.CONTROLLERS.add(controller);
-				
-			} else if(type == Type.KEYBOARD) {
-				
-				DeviceManager.DEVICES.add(new Keyboard(controller));
-				DeviceManager.CONTROLLERS.add(controller);
-				
-			} else if(type == Type.GAMEPAD || type == Type.STICK) {
-
-				DeviceManager.DEVICES.add(new Gamepad(controller));
-				DeviceManager.CONTROLLERS.add(controller);
-			}
+			DeviceManager.addDevice(controller);
 		}
 	}
 
@@ -173,7 +117,6 @@ public final class DeviceManager {
 		DeviceManager.ENVIRONMENT.removeControllerListener(DeviceManager.CONTROLLER_LISTENER);
 		DeviceManager.CONTROLLER_LISTENER = null;
 		DeviceManager.ENVIRONMENT = null;
-		DeviceManager.CONTROLLERS = null;
 		DeviceManager.DEVICES = null;
 	}
 	
@@ -349,5 +292,41 @@ public final class DeviceManager {
 		}
 		
 		return gamepads;
+	}
+	
+	private static final class Adapter implements ControllerListener {
+		
+		// FIXME
+		// WHY DOES A CONTROLLER LISTENER EXIST IF IT DOESN'T WORK!?
+		
+		@Override
+		public void controllerRemoved(ControllerEvent event) {
+			
+			// System.out.println("Removed " + event.getController().getName());
+			
+			List<Device> devices = new ArrayList<>();
+			DeviceManager.DEVICES.forEach(device -> {
+
+				if(device.getController() == event.getController()) {
+					
+					device.remove();
+					
+				} else {
+					
+					devices.add(device);
+				}
+			});
+			
+			DeviceManager.DEVICES = devices;
+		}
+		
+		@Override
+		public void controllerAdded(ControllerEvent event) {
+			
+			// System.out.println("Added " + event.getController().getName());
+			
+			Controller controller = event.getController();
+			DeviceManager.addDevice(controller);
+		}
 	}
 }

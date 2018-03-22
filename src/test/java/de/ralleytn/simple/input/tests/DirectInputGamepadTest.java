@@ -35,7 +35,7 @@ import de.ralleytn.simple.input.Gamepad;
 import de.ralleytn.simple.input.GamepadEvent;
 import de.ralleytn.simple.input.Mouse;
 
-class GamepadTest {
+class DirectInputGamepadTest {
 	
 	private static final void waitUntilAllAreDown(Gamepad gamepad, int[] buttons) {
 	
@@ -137,7 +137,7 @@ class GamepadTest {
 		
 		// SETUP
 		DeviceManager.create();
-		GamepadListenerTestFrame frame = new GamepadListenerTestFrame();
+		DirectInputGamepadListenerTestFrame frame = new DirectInputGamepadListenerTestFrame();
 		DeviceManager.addGamepadListener(frame);
 		DeviceManager.getGamepads().forEach(Gamepad::startListening);
 		frame.setVisible(true);

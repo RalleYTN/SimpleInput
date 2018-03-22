@@ -30,7 +30,7 @@ import de.ralleytn.simple.input.Direction;
 import de.ralleytn.simple.input.GamepadEvent;
 import de.ralleytn.simple.input.GamepadListener;
 
-class GamepadListenerTestFrame extends JFrame implements GamepadListener {
+class DirectInputGamepadListenerTestFrame extends JFrame implements GamepadListener {
 
 	private static final long serialVersionUID = -2912829526355959130L;
 	
@@ -47,12 +47,12 @@ class GamepadListenerTestFrame extends JFrame implements GamepadListener {
 	private CheckList<Direction> leftAnalogStickCheckList;
 	private CheckList<Direction> rightAnalogStickCheckList;
 	
-	public GamepadListenerTestFrame() {
+	public DirectInputGamepadListenerTestFrame() {
 		
 		super("GamepadListener Test");
 		
 		Direction[] directions = Direction.values();
-		this.buttonCheckList = new CheckList<>("Buttons", GamepadListenerTestFrame.BUTTON_NAMES);
+		this.buttonCheckList = new CheckList<>("Buttons", DirectInputGamepadListenerTestFrame.BUTTON_NAMES);
 		this.povCheckList = new CheckList<>("POV", directions);
 		this.leftAnalogStickCheckList = new CheckList<>("Left Analog Stick", directions);
 		this.rightAnalogStickCheckList = new CheckList<>("Right Analog Stick", directions);
