@@ -41,18 +41,15 @@ class DirectInputGamepadTest {
 	
 		TestUtil.sleep(() -> {
 			
-			boolean allDown = true;
-			
 			for(int button : buttons) {
 				
 				if(!gamepad.isButtonDown(button)) {
 					
-					allDown = false;
-					break;
+					return true;
 				}
 			}
 			
-			return allDown;
+			return false;
 		});
 	}
 	
@@ -115,7 +112,7 @@ class DirectInputGamepadTest {
 		gamepad.startListening();
 
 		// TEST 1
-		System.out.println("Press and hold A, B, X, Y at the same time");
+		System.out.println("Press and hold 3, 2, 4, 1 at the same time");
 		waitUntilAllAreDown(gamepad, new int[] {GamepadEvent.BUTTON_A, GamepadEvent.BUTTON_B, GamepadEvent.BUTTON_X, GamepadEvent.BUTTON_Y});
 		
 		// TEST 2

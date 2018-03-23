@@ -56,11 +56,7 @@ public class Mouse extends Device {
 	private boolean middleDown;
 	private int buttonCount;
 	
-	/**
-	 * @param controller the {@linkplain Controller} that should be wrapped
-	 * @since 1.0.0
-	 */
-	public Mouse(Controller controller) {
+	Mouse(Controller controller) {
 		
 		super(controller);
 		
@@ -167,30 +163,32 @@ public class Mouse extends Device {
 			
 		} else if(Axis.Z.equals(id)) {
 			
-			this.listeners.forEach(listener -> listener.onScroll(new MouseEvent(this, 0, 0, event.getValue(), null)));
+			this.listeners.forEach(listener -> listener.onScroll(new MouseEvent(this, 0, 0, event.getValue(), -1)));
 		}
 	}
 	
-	private final void processButtonEvent(Identifier id, boolean button) {
+	private final void processButtonEvent(Identifier id, boolean buttonDown) {
 		
-		if(button) {
+		int button = Mouse.getButtonByIdentifier(id);
+		
+		if(buttonDown) {
 			
-			this.listeners.forEach(listener -> listener.onClick(new MouseEvent(this, 0, 0, 0, id)));
+			this.listeners.forEach(listener -> listener.onClick(new MouseEvent(this, 0, 0, 0, button)));
 			
 		} else {
 			
-			this.listeners.forEach(listener -> listener.onRelease(new MouseEvent(this, 0, 0, 0, id)));
+			this.listeners.forEach(listener -> listener.onRelease(new MouseEvent(this, 0, 0, 0, button)));
 		}
 	}
 	
 	private final void processMovementEvent(float delta) {
 		
-			   if(this.leftDown)   {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Identifier.Button.LEFT)));
-		} else if(this.rightDown)  {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Identifier.Button.RIGHT)));
-		} else if(this.middleDown) {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Identifier.Button.MIDDLE)));
+			   if(this.leftDown)   {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Mouse.getButtonByIdentifier(Identifier.Button.LEFT))));
+		} else if(this.rightDown)  {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Mouse.getButtonByIdentifier(Identifier.Button.RIGHT))));
+		} else if(this.middleDown) {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Mouse.getButtonByIdentifier(Identifier.Button.MIDDLE))));
 		} else {
 			
-			this.listeners.forEach(listener -> listener.onMove(new MouseEvent(this, 0, delta, 0, null)));
+			this.listeners.forEach(listener -> listener.onMove(new MouseEvent(this, 0, delta, 0, -1)));
 		}
 	}
 	
@@ -246,6 +244,14 @@ public class Mouse extends Device {
 	public boolean isMiddleDown() {
 		
 		return this.middleDown;
+	}
+	
+	private static final int getButtonByIdentifier(Identifier id) {
+		
+		return id == Identifier.Button.LEFT ? MouseEvent.BUTTON_LEFT :
+			   id == Identifier.Button.MIDDLE ? MouseEvent.BUTTON_MIDDLE :
+			   id == Identifier.Button.RIGHT ? MouseEvent.BUTTON_RIGHT :
+		       -1;
 	}
 	
 	private static final boolean isButton(Identifier id) {

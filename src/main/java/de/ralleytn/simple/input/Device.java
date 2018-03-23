@@ -39,12 +39,8 @@ public abstract class Device {
 	protected Thread thread;
 	protected boolean listening;
 	protected long timeBetweenUpdates;
-	
-	/**
-	 * @param controller the {@linkplain Controller} that should be wrapped
-	 * @since 1.0.0
-	 */
-	public Device(Controller controller) {
+
+	Device(Controller controller) {
 		
 		this.controller = controller;
 		this.timeBetweenUpdates = 10;
@@ -54,17 +50,26 @@ public abstract class Device {
 				
 				while(this.listening) {
 					
-					this.controller.poll();
-					EventQueue queue = this.controller.getEventQueue();
-					Event event = new Event();
+					boolean stillConnected = this.controller.poll();
 					
-					while(queue.getNextEvent(event)) {
+					if(stillConnected) {
 						
-						this.onEvent(event);
-					}
+						EventQueue queue = this.controller.getEventQueue();
+						Event event = new Event();
+						
+						while(queue.getNextEvent(event)) {
+							
+							this.onEvent(event);
+						}
+						
+						this.update();
+						Thread.sleep(this.timeBetweenUpdates);
 					
-					this.update();
-					Thread.sleep(this.timeBetweenUpdates);
+					} else {
+						
+						this.remove();
+						DeviceManager.removeDevice(this);
+					}
 				}
 				
 			} catch(InterruptedException exception) {
@@ -156,10 +161,16 @@ public abstract class Device {
 	}
 	
 	/**
-	 * @return the wrapped {@linkplain Controller} instance
+	 * 
+	 * @return
 	 * @since 1.0.0
 	 */
-	public Controller getController() {
+	public int getPortNumber() {
+		
+		return this.controller.getPortNumber();
+	}
+
+	Controller getController() {
 		
 		return this.controller;
 	}

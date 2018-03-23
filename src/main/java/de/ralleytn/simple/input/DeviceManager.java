@@ -49,7 +49,12 @@ public final class DeviceManager {
 	
 	private DeviceManager() {}
 	
-	private static final void addDevice(Controller controller) {
+	static synchronized final void removeDevice(Device device) {
+		
+		DeviceManager.DEVICES.remove(device);
+	}
+	
+	private static synchronized final void addDevice(Controller controller) {
 		
 		Type type = controller.getType();
 		
@@ -94,7 +99,7 @@ public final class DeviceManager {
 	 * Has to be done before using any other methods.
 	 * @since 1.0.0
 	 */
-	public static final void create() {
+	public static synchronized final void create() {
 		
 		DeviceManager.DEVICES = new ArrayList<>();
 		DeviceManager.CONTROLLER_LISTENER = new Adapter();
@@ -112,7 +117,7 @@ public final class DeviceManager {
 	 * Should be called once you are done using this library.
 	 * @since 1.0.0
 	 */
-	public static final void destroy() {
+	public static synchronized final void destroy() {
 		
 		DeviceManager.ENVIRONMENT.removeControllerListener(DeviceManager.CONTROLLER_LISTENER);
 		DeviceManager.CONTROLLER_LISTENER = null;
@@ -125,7 +130,7 @@ public final class DeviceManager {
 	 * @param listener the {@linkplain MouseListener}
 	 * @since 1.0.0
 	 */
-	public static final void addMouseListener(MouseListener listener) {
+	public static synchronized final void addMouseListener(MouseListener listener) {
 		
 		DeviceManager.getMice().forEach(mouse -> mouse.addMouseListener(listener));
 	}
@@ -135,7 +140,7 @@ public final class DeviceManager {
 	 * @param listener the {@linkplain MouseListener}
 	 * @since 1.0.0
 	 */
-	public static final void removeMouseListener(MouseListener listener) {
+	public static synchronized final void removeMouseListener(MouseListener listener) {
 		
 		DeviceManager.getMice().forEach(mouse -> mouse.removeMouseListener(listener));
 	}
@@ -145,7 +150,7 @@ public final class DeviceManager {
 	 * @param listener the {@linkplain KeyboardListener}
 	 * @since 1.0.0
 	 */
-	public static final void addKeyboardListener(KeyboardListener listener) {
+	public static synchronized final void addKeyboardListener(KeyboardListener listener) {
 		
 		DeviceManager.getKeyboards().forEach(keyboard -> keyboard.addKeyboardListener(listener));
 	}
@@ -155,7 +160,7 @@ public final class DeviceManager {
 	 * @param listener the {@linkplain KeyboardListener}
 	 * @since 1.0.0
 	 */
-	public static final void removeKeyboardListener(KeyboardListener listener) {
+	public static synchronized final void removeKeyboardListener(KeyboardListener listener) {
 		
 		DeviceManager.getKeyboards().forEach(keyboard -> keyboard.removeKeyboardListener(listener));
 	}
@@ -165,7 +170,7 @@ public final class DeviceManager {
 	 * @param listener the {@linkplain GamepadListener}
 	 * @since 1.0.0
 	 */
-	public static final void addGamepadListener(GamepadListener listener) {
+	public static synchronized final void addGamepadListener(GamepadListener listener) {
 		
 		DeviceManager.getGamepads().forEach(gamepad -> gamepad.addGamepadListener(listener));
 	}
@@ -175,7 +180,7 @@ public final class DeviceManager {
 	 * @param listener the {@linkplain GamepadListener}
 	 * @since 1.0.0
 	 */
-	public static final void removeGamepadListener(GamepadListener listener) {
+	public static synchronized final void removeGamepadListener(GamepadListener listener) {
 		
 		DeviceManager.getGamepads().forEach(gamepad -> gamepad.removeGamepadListener(listener));
 	}
@@ -184,7 +189,7 @@ public final class DeviceManager {
 	 * @return all registered mice
 	 * @since 1.0.0
 	 */
-	public static final List<Mouse> getMice() {
+	public static synchronized final List<Mouse> getMice() {
 		
 		List<Mouse> mice = new ArrayList<>();
 		DeviceManager.DEVICES.forEach(device -> {
@@ -202,7 +207,7 @@ public final class DeviceManager {
 	 * @return all registered keyboards
 	 * @since 1.0.0
 	 */
-	public static final List<Keyboard> getKeyboards() {
+	public static synchronized final List<Keyboard> getKeyboards() {
 		
 		List<Keyboard> keyboards = new ArrayList<>();
 		DeviceManager.DEVICES.forEach(device -> {
@@ -220,7 +225,7 @@ public final class DeviceManager {
 	 * @return all registered gamepads
 	 * @since 1.0.0
 	 */
-	public static final List<Gamepad> getGamepads() {
+	public static synchronized final List<Gamepad> getGamepads() {
 		
 		List<Gamepad> gamepads = new ArrayList<>();
 		DeviceManager.DEVICES.forEach(device -> {
@@ -239,7 +244,7 @@ public final class DeviceManager {
 	 * @return all mice with the given name, or an empty list if there are no mice with this name
 	 * @since 1.0.0
 	 */
-	public static final List<Mouse> getMiceByName(String name) {
+	public static synchronized final List<Mouse> getMiceByName(String name) {
 		
 		List<Mouse> mice = new ArrayList<>();
 		
@@ -259,7 +264,7 @@ public final class DeviceManager {
 	 * @return all keyboards with the given name, or an empty list if there are no keyboards with this name
 	 * @since 1.0.0
 	 */
-	public static final List<Keyboard> getKeyboardsByName(String name) {
+	public static synchronized final List<Keyboard> getKeyboardsByName(String name) {
 		
 		List<Keyboard> keyboards = new ArrayList<>();
 		
@@ -279,7 +284,7 @@ public final class DeviceManager {
 	 * @return all gamepads with the given name, or an empty list if there are no gamepads with this name
 	 * @since 1.0.0
 	 */
-	public static final List<Gamepad> getGamepadsByName(String name) {
+	public static synchronized final List<Gamepad> getGamepadsByName(String name) {
 		
 		List<Gamepad> gamepads = new ArrayList<>();
 		
@@ -300,7 +305,7 @@ public final class DeviceManager {
 		// WHY DOES A CONTROLLER LISTENER EXIST IF IT DOESN'T WORK!?
 		
 		@Override
-		public void controllerRemoved(ControllerEvent event) {
+		public synchronized void controllerRemoved(ControllerEvent event) {
 			
 			// System.out.println("Removed " + event.getController().getName());
 			
@@ -321,8 +326,8 @@ public final class DeviceManager {
 		}
 		
 		@Override
-		public void controllerAdded(ControllerEvent event) {
-			
+		public synchronized void controllerAdded(ControllerEvent event) {
+
 			// System.out.println("Added " + event.getController().getName());
 			
 			Controller controller = event.getController();

@@ -23,9 +23,6 @@
  */
 package de.ralleytn.simple.input;
 
-import de.ralleytn.simple.input.internal.Util;
-import net.java.games.input.Component.Identifier;
-
 /**
  * Represents an event that was fired by a gamepad.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
@@ -47,28 +44,28 @@ public class GamepadEvent extends DeviceEvent {
 	public static final int ANALOG_STICK_RIGHT = 1;
 	
 	/**
-	 * A/3
+	 * A
 	 * @since 1.0.0
 	 */
-	public static final int BUTTON_A = 2;
+	public static final int BUTTON_A = 0;
 	
 	/**
-	 * B/2
+	 * B
 	 * @since 1.0.0
 	 */
 	public static final int BUTTON_B = 1;
 	
 	/**
-	 * X/4
+	 * X
 	 * @since 1.0.0
 	 */
-	public static final int BUTTON_X = 3;
+	public static final int BUTTON_X = 2;
 	
 	/**
-	 * Y/1
+	 * Y
 	 * @since 1.0.0
 	 */
-	public static final int BUTTON_Y = 0;
+	public static final int BUTTON_Y = 3;
 	
 	/**
 	 * Mode (if {@link Gamepad#getButtonCount()} returns {@code 12} instead of {@code 13}, this button is not supported by the gamepad)
@@ -126,24 +123,24 @@ public class GamepadEvent extends DeviceEvent {
 	
 	private final Direction direction;
 	private final int analogStick;
-	private final Identifier id;
+	private final int button;
 	private final float intensity;
 	
 	/**
 	 * @param device the device that fired this event
 	 * @param direction the direction the POV or an analog stick is facing
 	 * @param analogStick the analog stick associated with this event
-	 * @param id the component identifier (only important for the buttons)
+	 * @param button the button that was either pressed or released
 	 * @param intensity the intensity with which an analog stick is pushed
 	 * @since 1.0.0
 	 */
-	public GamepadEvent(Device device, Direction direction, int analogStick, Identifier id, float intensity) {
+	public GamepadEvent(Device device, Direction direction, int analogStick, int button, float intensity) {
 		
 		super(device);
 		
 		this.direction = direction;
 		this.analogStick = analogStick;
-		this.id = id;
+		this.button = button;
 		this.intensity = intensity;
 	}
 	
@@ -171,7 +168,7 @@ public class GamepadEvent extends DeviceEvent {
 	 */
 	public final int getButton() {
 		
-		return Util.getGamepadButtonByIdentifier(this.id);
+		return this.button;
 	}
 	
 	/**

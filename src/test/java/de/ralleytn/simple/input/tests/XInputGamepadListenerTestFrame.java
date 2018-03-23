@@ -23,15 +23,49 @@
  */
 package de.ralleytn.simple.input.tests;
 
-import java.util.List;
+import javax.swing.JFrame;
 
-import org.junit.jupiter.api.Test;
+import de.ralleytn.simple.input.GamepadEvent;
+import de.ralleytn.simple.input.GamepadListener;
 
-import de.ralleytn.simple.input.DeviceManager;
-import de.ralleytn.simple.input.Gamepad;
-import de.ralleytn.simple.input.XInputGamepad;
+public class XInputGamepadListenerTestFrame extends JFrame implements GamepadListener {
 
-class XInputGamepadTest {
-
+	private static final long serialVersionUID = -2912829526355959130L;
 	
+	private static final String[] BUTTON_NAMES = {
+		
+		"X", "Y", "A", "B",
+		"START", "SELECT",
+		"R1", "L1",
+	};
+
+	@Override
+	public void onAnalogStickPush(GamepadEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onButtonPress(GamepadEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onButtonRelease(GamepadEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPOVPress(GamepadEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPOVRelease(GamepadEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
 }

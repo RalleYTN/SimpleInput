@@ -26,8 +26,6 @@ package de.ralleytn.simple.input;
 import java.awt.MouseInfo;
 import java.awt.Point;
 
-import net.java.games.input.Component.Identifier;
-
 /**
  * Represents an event that can be fired by mice.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
@@ -57,11 +55,11 @@ public class MouseEvent extends DeviceEvent {
 	private final float deltaX;
 	private final float deltaY;
 	private final float unitsToScroll;
-	private final Identifier id;
+	private final int button;
 	private final int x;
 	private final int y;
 	
-	public MouseEvent(Device device, float deltaX, float deltaY, float unitsToScroll, Identifier id) {
+	public MouseEvent(Device device, float deltaX, float deltaY, float unitsToScroll, int button) {
 		
 		super(device);
 		
@@ -70,7 +68,7 @@ public class MouseEvent extends DeviceEvent {
 		this.deltaX = deltaX;
 		this.deltaY = deltaY;
 		this.unitsToScroll = unitsToScroll;
-		this.id = id;
+		this.button = button;
 		this.x = location.x;
 		this.y = location.y;
 	}
@@ -125,10 +123,7 @@ public class MouseEvent extends DeviceEvent {
 	 * @since 1.0.0
 	 */
 	public final int getButton() {
-		
-		return this.id == Identifier.Button.LEFT ? MouseEvent.BUTTON_LEFT :
-			   this.id == Identifier.Button.MIDDLE ? MouseEvent.BUTTON_MIDDLE :
-			   this.id == Identifier.Button.RIGHT ? MouseEvent.BUTTON_RIGHT :
-		       -1;
+
+		return this.button;
 	}
 }

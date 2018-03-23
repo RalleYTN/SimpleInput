@@ -23,10 +23,6 @@
  */
 package de.ralleytn.simple.input;
 
-import de.ralleytn.simple.input.internal.Util;
-import net.java.games.input.Component.Identifier;
-import net.java.games.input.Component.Identifier.Key;
-
 /**
  * Represents an event that was triggered by a keyboard.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
@@ -135,18 +131,20 @@ public class KeyboardEvent extends DeviceEvent {
 	/** @since 1.0.0 */ public static final int KEY_BRACKET_CLOSE = 221;
 	/** @since 1.0.0 */ public static final int KEY_SINGLE_QUOTE = 222;
 	
-	private final Identifier id;
+	private final int keyCode;
+	private final String keyName;
 	
 	/**
 	 * @param device the device that fired this event
-	 * @param id the identifier of the key that is associated with this event
+	 * @param keyCode 
 	 * @since 1.0.0
 	 */
-	public KeyboardEvent(Device device, Identifier id) {
+	public KeyboardEvent(Device device, int keyCode, String keyName) {
 		
 		super(device);
 		
-		this.id = id;
+		this.keyCode = keyCode;
+		this.keyName = keyName;
 	}
 	
 	/**
@@ -164,7 +162,7 @@ public class KeyboardEvent extends DeviceEvent {
 	 */
 	public final int getKeyCode() {
 		
-		return Util.getKeyCode(this.id);
+		return this.keyCode;
 	}
 	
 	/**
@@ -173,6 +171,6 @@ public class KeyboardEvent extends DeviceEvent {
 	 */
 	public final String getKeyName() {
 		
-		return this.id.getName();
+		return this.keyName;
 	}
 }

@@ -5,7 +5,29 @@
 # Description
 
 This library provides simple input listeners for keyboard, mouse and gamepad that work outside of AWT.
-It wraps JInput 2.0.7 so writing custom listeners is also possible.
+It is possible to listen to input devices individually.
+
+### Example code
+
+Listening to the first mouse:
+
+```java
+DeviceManager.create();
+List<Mouse> mice = DeviceManager.getMice();
+Mouse mouse = mice.get(0);
+mouse.addMouseListener(new MouseAdapter() {
+	
+	@Override
+	public void onRelease(MouseEvent event) {
+	
+		if(event.getButton() == MouseEvent.BUTTON_LEFT) {
+		
+			System.out.println("Released the left mouse button");
+		}
+	}
+});
+mouse.startListening();
+```
 
 ## Changelog
 
