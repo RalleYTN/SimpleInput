@@ -25,7 +25,7 @@ package de.ralleytn.simple.input;
 
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Component.Identifier.Axis;
-
+import de.ralleytn.simple.input.internal.DirectInputGamepadButtonMapping;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import net.java.games.input.Event;
@@ -45,13 +45,29 @@ public class DirectInputGamepad extends Gamepad {
 
 	DirectInputGamepad(Controller controller) {
 		
-		super(controller);
+		super(controller, DirectInputGamepadButtonMapping.getDownButtonArraySize());
+	}
+	
+	@Override
+	protected int countButtons() {
+		
+		int buttonCount = 0;
+		
+		for(Component component : this.controller.getComponents()) {
+			
+			if(DirectInputGamepadButtonMapping.isValidButton(component.getIdentifier())) {
+				
+				buttonCount++;
+			}
+		}
+		
+		return buttonCount;
 	}
 	
 	@Override
 	protected void update() {
 		
-		this.updateCursorPosition(this.axisX, this.axisY, this.axisZ, this.axisRZ);
+		this.mouseControl.updateCursorPosition(this.axisX, this.axisY, this.axisZ, this.axisRZ);
 	}
 	
 	@Override
@@ -65,9 +81,9 @@ public class DirectInputGamepad extends Gamepad {
 			
 			this.processPOVEvent(id, value);
 			
-		} else if(Gamepad.isButton(id)) {
+		} else if(DirectInputGamepadButtonMapping.isValidButton(id)) {
 			
-			int button = DirectInputGamepad.getGamepadButtonByIdentifier(id);
+			int button = DirectInputGamepadButtonMapping.getMap().get(id);
 			this.processButtonEvent(button, value);
 			       
 		} else if(Axis.Y.equals(id)) {
@@ -90,23 +106,5 @@ public class DirectInputGamepad extends Gamepad {
 			this.axisZ = Gamepad.isDead(value) ? 0.0F : value;
 			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisZ, this.axisRZ);
 		}
-	}
-
-	private static final int getGamepadButtonByIdentifier(Identifier id) {
-		
-		return id == Identifier.Button._0  || id == Identifier.Button.Y            ? GamepadEvent.BUTTON_Y :
-			   id == Identifier.Button._1  || id == Identifier.Button.B            ? GamepadEvent.BUTTON_B :
-			   id == Identifier.Button._2  || id == Identifier.Button.A            ? GamepadEvent.BUTTON_A :
-			   id == Identifier.Button._3  || id == Identifier.Button.X            ? GamepadEvent.BUTTON_X :
-			   id == Identifier.Button._4  || id == Identifier.Button.LEFT_THUMB   ? GamepadEvent.BUTTON_L1 :
-			   id == Identifier.Button._5  || id == Identifier.Button.RIGHT_THUMB  ? GamepadEvent.BUTTON_R1 :
-			   id == Identifier.Button._6  || id == Identifier.Button.LEFT_THUMB2  ? GamepadEvent.BUTTON_L2 :
-			   id == Identifier.Button._7  || id == Identifier.Button.RIGHT_THUMB2 ? GamepadEvent.BUTTON_R2 :
-			   id == Identifier.Button._8  || id == Identifier.Button.SELECT       ? GamepadEvent.BUTTON_SELECT :
-			   id == Identifier.Button._9  || id == Identifier.Button.START        ? GamepadEvent.BUTTON_START :
-			   id == Identifier.Button._10 || id == Identifier.Button.LEFT_THUMB3  ? GamepadEvent.BUTTON_L3 :
-			   id == Identifier.Button._11 || id == Identifier.Button.RIGHT_THUMB3 ? GamepadEvent.BUTTON_R3 :
-			   id == Identifier.Button._12 || id == Identifier.Button.MODE         ? GamepadEvent.BUTTON_MODE :
-			   -1;
 	}
 }

@@ -49,7 +49,7 @@ public final class DeviceManager {
 	
 	private DeviceManager() {}
 	
-	static synchronized final void removeDevice(Device device) {
+	protected static synchronized final void removeDevice(Device device) {
 		
 		DeviceManager.DEVICES.remove(device);
 	}

@@ -23,14 +23,9 @@
  */
 package de.ralleytn.simple.input.tests;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import de.ralleytn.simple.input.Direction;
 import de.ralleytn.simple.input.GamepadEvent;
-import de.ralleytn.simple.input.GamepadListener;
 
-class DirectInputGamepadListenerTestFrame extends JFrame implements GamepadListener {
+class DirectInputGamepadListenerTestFrame extends GamepadListenerTestFrame {
 
 	private static final long serialVersionUID = -2912829526355959130L;
 	
@@ -42,70 +37,9 @@ class DirectInputGamepadListenerTestFrame extends JFrame implements GamepadListe
 		"L1", "L2", "L3"
 	};
 	
-	private CheckList<String> buttonCheckList;
-	private CheckList<Direction> povCheckList;
-	private CheckList<Direction> leftAnalogStickCheckList;
-	private CheckList<Direction> rightAnalogStickCheckList;
-	
 	public DirectInputGamepadListenerTestFrame() {
 		
-		super("GamepadListener Test");
-		
-		Direction[] directions = Direction.values();
-		this.buttonCheckList = new CheckList<>("Buttons", DirectInputGamepadListenerTestFrame.BUTTON_NAMES);
-		this.povCheckList = new CheckList<>("POV", directions);
-		this.leftAnalogStickCheckList = new CheckList<>("Left Analog Stick", directions);
-		this.rightAnalogStickCheckList = new CheckList<>("Right Analog Stick", directions);
-		
-		JPanel contentPane = new JPanel();
-		contentPane.add(this.buttonCheckList.getPanel());
-		contentPane.add(this.povCheckList.getPanel());
-		contentPane.add(this.leftAnalogStickCheckList.getPanel());
-		contentPane.add(this.rightAnalogStickCheckList.getPanel());
-		
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setContentPane(contentPane);
-		this.pack();
-		this.setLocationRelativeTo(null);
-	}
-	
-	public CheckList<String> getButtonCheckList() {
-		
-		return this.buttonCheckList;
-	}
-	
-	public CheckList<Direction> getPovCheckList() {
-		
-		return this.povCheckList;
-	}
-	
-	public CheckList<Direction> getLeftAnalogStickCheckList() {
-		
-		return this.leftAnalogStickCheckList;
-	}
-	
-	public CheckList<Direction> getRightAnalogStickCheckList() {
-		
-		return this.rightAnalogStickCheckList;
-	}
-	
-	@Override public void onPOVPress(GamepadEvent event) {}
-	@Override public void onButtonPress(GamepadEvent event) {}
-	
-	@Override
-	public void onAnalogStickPush(GamepadEvent event) {
-		
-		int analogStick = event.getAnalogStick();
-		Direction direction = event.getDirection();
-		
-		if(analogStick == GamepadEvent.ANALOG_STICK_LEFT) {
-			
-			this.leftAnalogStickCheckList.check(direction);
-			
-		} else if(analogStick == GamepadEvent.ANALOG_STICK_RIGHT) {
-			
-			this.rightAnalogStickCheckList.check(direction);
-		}
+		super(DirectInputGamepadListenerTestFrame.BUTTON_NAMES);
 	}
 
 	@Override
@@ -126,11 +60,5 @@ class DirectInputGamepadListenerTestFrame extends JFrame implements GamepadListe
 		} else if(button == GamepadEvent.BUTTON_L2)     {this.buttonCheckList.check("L2");
 		} else if(button == GamepadEvent.BUTTON_L3)     {this.buttonCheckList.check("L3");
 		}
-	}
-
-	@Override
-	public void onPOVRelease(GamepadEvent event) {
-		
-		this.povCheckList.check(event.getDirection());
 	}
 }

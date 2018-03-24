@@ -31,45 +31,45 @@ package de.ralleytn.simple.input;
  */
 public class KeyboardEvent extends DeviceEvent {
 	
-	/** @since 1.0.0 */ public static final int KEY_A = 'a';
-	/** @since 1.0.0 */ public static final int KEY_B = 'b';
-	/** @since 1.0.0 */ public static final int KEY_C = 'c';
-	/** @since 1.0.0 */ public static final int KEY_D = 'd';
-	/** @since 1.0.0 */ public static final int KEY_E = 'e';
-	/** @since 1.0.0 */ public static final int KEY_F = 'f';
-	/** @since 1.0.0 */ public static final int KEY_G = 'g';
-	/** @since 1.0.0 */ public static final int KEY_H = 'h';
-	/** @since 1.0.0 */ public static final int KEY_I = 'i';
-	/** @since 1.0.0 */ public static final int KEY_J = 'j';
-	/** @since 1.0.0 */ public static final int KEY_K = 'k';
-	/** @since 1.0.0 */ public static final int KEY_L = 'l';
-	/** @since 1.0.0 */ public static final int KEY_M = 'm';
-	/** @since 1.0.0 */ public static final int KEY_N = 'n';
-	/** @since 1.0.0 */ public static final int KEY_O = 'o';
-	/** @since 1.0.0 */ public static final int KEY_P = 'p';
-	/** @since 1.0.0 */ public static final int KEY_Q = 'q';
-	/** @since 1.0.0 */ public static final int KEY_R = 'r';
-	/** @since 1.0.0 */ public static final int KEY_S = 's';
-	/** @since 1.0.0 */ public static final int KEY_T = 't';
-	/** @since 1.0.0 */ public static final int KEY_U = 'u';
-	/** @since 1.0.0 */ public static final int KEY_V = 'v';
-	/** @since 1.0.0 */ public static final int KEY_W = 'w';
-	/** @since 1.0.0 */ public static final int KEY_X = 'x';
-	/** @since 1.0.0 */ public static final int KEY_Y = 'y';
-	/** @since 1.0.0 */ public static final int KEY_Z = 'z';
-	/** @since 1.0.0 */ public static final int KEY_1 = '1';
-	/** @since 1.0.0 */ public static final int KEY_2 = '2';
-	/** @since 1.0.0 */ public static final int KEY_3 = '3';
-	/** @since 1.0.0 */ public static final int KEY_4 = '4';
-	/** @since 1.0.0 */ public static final int KEY_5 = '5';
-	/** @since 1.0.0 */ public static final int KEY_6 = '6';
-	/** @since 1.0.0 */ public static final int KEY_7 = '7';
-	/** @since 1.0.0 */ public static final int KEY_8 = '8';
-	/** @since 1.0.0 */ public static final int KEY_9 = '9';
-	/** @since 1.0.0 */ public static final int KEY_0 = '0';
-	/** @since 1.0.0 */ public static final int KEY_ENTER = '\n';
-	/** @since 1.0.0 */ public static final int KEY_TABULATOR = '\t';
-	/** @since 1.0.0 */ public static final int KEY_SPACE = ' ';
+	/** @since 1.0.0 */ public static final int KEY_A = 65;
+	/** @since 1.0.0 */ public static final int KEY_B = 66;
+	/** @since 1.0.0 */ public static final int KEY_C = 67;
+	/** @since 1.0.0 */ public static final int KEY_D = 68;
+	/** @since 1.0.0 */ public static final int KEY_E = 69;
+	/** @since 1.0.0 */ public static final int KEY_F = 70;
+	/** @since 1.0.0 */ public static final int KEY_G = 71;
+	/** @since 1.0.0 */ public static final int KEY_H = 72;
+	/** @since 1.0.0 */ public static final int KEY_I = 73;
+	/** @since 1.0.0 */ public static final int KEY_J = 74;
+	/** @since 1.0.0 */ public static final int KEY_K = 75;
+	/** @since 1.0.0 */ public static final int KEY_L = 76;
+	/** @since 1.0.0 */ public static final int KEY_M = 77;
+	/** @since 1.0.0 */ public static final int KEY_N = 78;
+	/** @since 1.0.0 */ public static final int KEY_O = 79;
+	/** @since 1.0.0 */ public static final int KEY_P = 80;
+	/** @since 1.0.0 */ public static final int KEY_Q = 81;
+	/** @since 1.0.0 */ public static final int KEY_R = 82;
+	/** @since 1.0.0 */ public static final int KEY_S = 83;
+	/** @since 1.0.0 */ public static final int KEY_T = 84;
+	/** @since 1.0.0 */ public static final int KEY_U = 85;
+	/** @since 1.0.0 */ public static final int KEY_V = 86;
+	/** @since 1.0.0 */ public static final int KEY_W = 87;
+	/** @since 1.0.0 */ public static final int KEY_X = 88;
+	/** @since 1.0.0 */ public static final int KEY_Y = 89;
+	/** @since 1.0.0 */ public static final int KEY_Z = 90;
+	/** @since 1.0.0 */ public static final int KEY_1 = 49;
+	/** @since 1.0.0 */ public static final int KEY_2 = 50;
+	/** @since 1.0.0 */ public static final int KEY_3 = 51;
+	/** @since 1.0.0 */ public static final int KEY_4 = 52;
+	/** @since 1.0.0 */ public static final int KEY_5 = 53;
+	/** @since 1.0.0 */ public static final int KEY_6 = 54;
+	/** @since 1.0.0 */ public static final int KEY_7 = 55;
+	/** @since 1.0.0 */ public static final int KEY_8 = 56;
+	/** @since 1.0.0 */ public static final int KEY_9 = 57;
+	/** @since 1.0.0 */ public static final int KEY_0 = 48;
+	/** @since 1.0.0 */ public static final int KEY_ENTER = 13;
+	/** @since 1.0.0 */ public static final int KEY_TABULATOR = 9;
+	/** @since 1.0.0 */ public static final int KEY_SPACE = 32;
 	/** @since 1.0.0 */ public static final int KEY_ARROW_LEFT = 37;
 	/** @since 1.0.0 */ public static final int KEY_ARROW_DOWN = 40;
 	/** @since 1.0.0 */ public static final int KEY_ARROW_RIGHT = 39;
@@ -87,9 +87,9 @@ public class KeyboardEvent extends DeviceEvent {
 	/** @since 1.0.0 */ public static final int KEY_SHIFT = 16;
 	/** @since 1.0.0 */ public static final int KEY_CONTROL = 17;
 	/** @since 1.0.0 */ public static final int KEY_ALT = 18;
-	/** @since 1.0.0 */ public static final int KEY_WINDOW_LEFT = 91;
-	/** @since 1.0.0 */ public static final int KEY_WINDOW_RIGHT = 92;
-	/** @since 1.0.0 */ public static final int KEY_SELECT = 93;
+	/** @since 1.0.0 */ public static final int KEY_WINDOWS_LEFT = 91;
+	/** @since 1.0.0 */ public static final int KEY_WINDOWS_RIGHT = 92;
+	/** @since 1.0.0 */ public static final int KEY_SELECT = 93; // NOT IN JINPUT
 	/** @since 1.0.0 */ public static final int KEY_NUMPAD_0 = 96;
 	/** @since 1.0.0 */ public static final int KEY_NUMPAD_1 = 97;
 	/** @since 1.0.0 */ public static final int KEY_NUMPAD_2 = 98;
@@ -119,17 +119,19 @@ public class KeyboardEvent extends DeviceEvent {
 	/** @since 1.0.0 */ public static final int KEY_F12 = 123;
 	/** @since 1.0.0 */ public static final int KEY_NUM_LOCK = 144;
 	/** @since 1.0.0 */ public static final int KEY_SCROLL_LOCK = 145;
-	/** @since 1.0.0 */ public static final int KEY_SEMI_COLON = 186;
+	/** @since 1.0.0 */ public static final int KEY_SEMICOLON = 186;
 	/** @since 1.0.0 */ public static final int KEY_EQUALS = 187;
 	/** @since 1.0.0 */ public static final int KEY_COMMA = 188;
-	/** @since 1.0.0 */ public static final int KEY_DASH = 189;
+	/** @since 1.0.0 */ public static final int KEY_DASH = 189; // NOT IN JINPUT
 	/** @since 1.0.0 */ public static final int KEY_PERIOD = 190;
 	/** @since 1.0.0 */ public static final int KEY_FORWARD_SLASH = 191;
 	/** @since 1.0.0 */ public static final int KEY_GRAVE_ACCENT = 192;
 	/** @since 1.0.0 */ public static final int KEY_BRACKET_OPEN = 219;
 	/** @since 1.0.0 */ public static final int KEY_BACKSLASH = 220;
 	/** @since 1.0.0 */ public static final int KEY_BRACKET_CLOSE = 221;
-	/** @since 1.0.0 */ public static final int KEY_SINGLE_QUOTE = 222;
+	/** @since 1.0.0 */ public static final int KEY_APOSTROPHE = 222;
+	/** @since 1.0.0 */ public static final int KEY_APPS = 93;
+	
 	
 	private final int keyCode;
 	private final String keyName;
@@ -145,15 +147,6 @@ public class KeyboardEvent extends DeviceEvent {
 		
 		this.keyCode = keyCode;
 		this.keyName = keyName;
-	}
-	
-	/**
-	 * @return the character to the key code
-	 * @since 1.0.0
-	 */
-	public final char getKeyChar() {
-		
-		return (char)this.getKeyCode();
 	}
 	
 	/**

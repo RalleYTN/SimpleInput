@@ -170,7 +170,7 @@ public abstract class Device {
 		return this.controller.getPortNumber();
 	}
 
-	Controller getController() {
+	protected Controller getController() {
 		
 		return this.controller;
 	}

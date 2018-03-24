@@ -23,12 +23,9 @@
  */
 package de.ralleytn.simple.input.tests;
 
-import javax.swing.JFrame;
-
 import de.ralleytn.simple.input.GamepadEvent;
-import de.ralleytn.simple.input.GamepadListener;
 
-public class XInputGamepadListenerTestFrame extends JFrame implements GamepadListener {
+class XInputGamepadListenerTestFrame extends GamepadListenerTestFrame {
 
 	private static final long serialVersionUID = -2912829526355959130L;
 	
@@ -37,35 +34,29 @@ public class XInputGamepadListenerTestFrame extends JFrame implements GamepadLis
 		"X", "Y", "A", "B",
 		"START", "SELECT",
 		"R1", "L1",
+		"R3", "L3"
 	};
 
-	@Override
-	public void onAnalogStickPush(GamepadEvent event) {
-		// TODO Auto-generated method stub
+	public XInputGamepadListenerTestFrame() {
 		
-	}
-
-	@Override
-	public void onButtonPress(GamepadEvent event) {
-		// TODO Auto-generated method stub
-		
+		super(XInputGamepadListenerTestFrame.BUTTON_NAMES);
 	}
 
 	@Override
 	public void onButtonRelease(GamepadEvent event) {
-		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void onPOVPress(GamepadEvent event) {
-		// TODO Auto-generated method stub
+		int button = event.getButton();
 		
-	}
-
-	@Override
-	public void onPOVRelease(GamepadEvent event) {
-		// TODO Auto-generated method stub
-		
+		       if(button == GamepadEvent.BUTTON_A)      {this.buttonCheckList.check("A");
+		} else if(button == GamepadEvent.BUTTON_B)      {this.buttonCheckList.check("B");
+		} else if(button == GamepadEvent.BUTTON_X)      {this.buttonCheckList.check("X");
+		} else if(button == GamepadEvent.BUTTON_Y)      {this.buttonCheckList.check("Y");
+		} else if(button == GamepadEvent.BUTTON_START)  {this.buttonCheckList.check("START");
+		} else if(button == GamepadEvent.BUTTON_SELECT) {this.buttonCheckList.check("SELECT");
+		} else if(button == GamepadEvent.BUTTON_R1)     {this.buttonCheckList.check("R1");
+		} else if(button == GamepadEvent.BUTTON_R3)     {this.buttonCheckList.check("R3");
+		} else if(button == GamepadEvent.BUTTON_L1)     {this.buttonCheckList.check("L1");
+		} else if(button == GamepadEvent.BUTTON_L3)     {this.buttonCheckList.check("L3");
+		}
 	}
 }

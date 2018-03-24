@@ -23,8 +23,6 @@
  */
 package de.ralleytn.simple.input.tests;
 
-import javax.swing.JFrame;
-
 import org.junit.jupiter.api.Test;
 
 import de.ralleytn.simple.input.DeviceManager;
@@ -34,20 +32,23 @@ class KeyboardTest {
 
 	@Test
 	public void testKeyboardListener() {
-		
-		/*
+
+		// SETUP
 		DeviceManager.create();
+		KeyboardListenerTestFrame frame = new KeyboardListenerTestFrame();
+		DeviceManager.addKeyboardListener(frame);
 		DeviceManager.getKeyboards().forEach(Keyboard::startListening);
-		
-		JFrame frame = new JFrame();
-		frame.setSize(300, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		
-		TestUtil.sleep(() -> true);
+		// WAIT UNTIL DONE
+		TestUtil.sleep(() -> frame.getCheckList1().isAtLeastOneItemUnchecked() ||
+							 frame.getCheckList2().isAtLeastOneItemUnchecked() ||
+							 frame.getCheckList3().isAtLeastOneItemUnchecked() ||
+							 frame.getCheckList4().isAtLeastOneItemUnchecked());
+		
+		// CLEANUP
+		frame.dispose();
 		DeviceManager.getKeyboards().forEach(Keyboard::stopListening);
 		DeviceManager.destroy();
-		*/
 	}
 }

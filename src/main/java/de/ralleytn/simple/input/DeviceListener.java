@@ -38,9 +38,9 @@ public interface DeviceListener {
 	 */
 	public default void onRemove() {
 		
-		// FIXME
-		// ==== 19.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
-		// This method will never be called because the ControllerListener from jinput doesn't work
+		// ==== 23.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+		// This method will only be called if Controller#poll() returns false.
+		// The ControllerListener still doesn't work.
 		// ====
 	}
 }

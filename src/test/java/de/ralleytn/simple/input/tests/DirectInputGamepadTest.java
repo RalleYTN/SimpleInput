@@ -24,56 +24,35 @@
 package de.ralleytn.simple.input.tests;
 
 import java.awt.Color;
-import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import org.junit.jupiter.api.Test;
 
 import de.ralleytn.simple.input.DeviceManager;
+import de.ralleytn.simple.input.DirectInputGamepad;
 import de.ralleytn.simple.input.Gamepad;
 import de.ralleytn.simple.input.GamepadEvent;
-import de.ralleytn.simple.input.Mouse;
+import de.ralleytn.simple.input.MouseControl;
+
+// TODO
+// ==== 23.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+// Still needs testing with Steam controller
+// ====
 
 class DirectInputGamepadTest {
 	
-	private static final void waitUntilAllAreDown(Gamepad gamepad, int[] buttons) {
-	
-		TestUtil.sleep(() -> {
-			
-			for(int button : buttons) {
-				
-				if(!gamepad.isButtonDown(button)) {
-					
-					return true;
-				}
-			}
-			
-			return false;
-		});
-	}
-	
-	private static final void doCursorControlTest(JFrame frame) {
-		
-		int screenWidth = TestUtil.SCREEN_SIZE.width;
-		int screenHeight = TestUtil.SCREEN_SIZE.height;
-		Mouse.setCursorPosition(screenWidth / 2, screenHeight / 2);
-		frame.setLocation((int)(Math.random() * (screenWidth - frame.getWidth())), (int)(Math.random() * (screenHeight - frame.getHeight())));
-		TestUtil.sleep(() -> !frame.getBounds().contains(Mouse.getX(), Mouse.getY()));
-	}
-	
 	@Test
-	public void testCursorControl() {
+	public void testMouseControl() {
 		
 		// SETUP
 		DeviceManager.create();
-		List<Gamepad> gamepads = DeviceManager.getGamepads();
 		
-		Gamepad gamepad = gamepads.get(0);
+		Gamepad gamepad = getDirectInputGamepad();
 		gamepad.startListening();
-		gamepad.setAnalogStickControllingCursor(GamepadEvent.ANALOG_STICK_LEFT);
-		gamepad.setControlCursorWithAnalogStick(true);
-		gamepad.setCursorSensity(5.0F);
+		MouseControl mouseControl = gamepad.getMouseControl();
+		mouseControl.setEnabled(true);
 
 		JFrame frame = new JFrame();
 		frame.setSize(100, 100);
@@ -83,17 +62,23 @@ class DirectInputGamepadTest {
 		
 		// DO TESTS
 		System.out.println("Move the cursor with the left analog stick into the window");
-		doCursorControlTest(frame);
+		TestUtil.doCursorControlTest(frame);
 		System.out.println("Now the controls are inverted");
-		gamepad.setCursorSensity(-5.0F);
-		doCursorControlTest(frame);
+		mouseControl.setSensity(-5.0F);
+		TestUtil.doCursorControlTest(frame);
 		System.out.println("Use the right analog stick this time");
-		gamepad.setCursorSensity(5.0F);
-		gamepad.setAnalogStickControllingCursor(GamepadEvent.ANALOG_STICK_RIGHT);
-		doCursorControlTest(frame);
+		mouseControl.setSensity(5.0F);
+		mouseControl.setAnalogStick(GamepadEvent.ANALOG_STICK_RIGHT);
+		TestUtil.doCursorControlTest(frame);
 		System.out.println("Inverted again");
-		gamepad.setCursorSensity(-5.0F);
-		doCursorControlTest(frame);
+		mouseControl.setSensity(-5.0F);
+		TestUtil.doCursorControlTest(frame);
+		
+		JButton clickMe = new JButton("Click Me");
+		clickMe.addActionListener(event -> clickMe.setName("Clicked"));
+		frame.add(clickMe);
+		frame.validate();
+		TestUtil.sleep(() -> !"Clicked".equals(clickMe.getName()));
 
 		// CLEANUP
 		frame.dispose();
@@ -107,21 +92,20 @@ class DirectInputGamepadTest {
 
 		// SETUP
 		DeviceManager.create();
-		List<Gamepad> gamepads = DeviceManager.getGamepads();
-		Gamepad gamepad = gamepads.get(0);
+		Gamepad gamepad = getDirectInputGamepad();
 		gamepad.startListening();
 
 		// TEST 1
-		System.out.println("Press and hold 3, 2, 4, 1 at the same time");
-		waitUntilAllAreDown(gamepad, new int[] {GamepadEvent.BUTTON_A, GamepadEvent.BUTTON_B, GamepadEvent.BUTTON_X, GamepadEvent.BUTTON_Y});
+		System.out.println("Press and hold A, B, X, Y at the same time");
+		TestUtil.waitUntilAllAreDown(gamepad, new int[] {GamepadEvent.BUTTON_A, GamepadEvent.BUTTON_B, GamepadEvent.BUTTON_X, GamepadEvent.BUTTON_Y});
 		
 		// TEST 2
 		System.out.println("Press and hold L1, L2, R1, R2 at the same time");
-		waitUntilAllAreDown(gamepad, new int[] {GamepadEvent.BUTTON_R1, GamepadEvent.BUTTON_R2, GamepadEvent.BUTTON_L1, GamepadEvent.BUTTON_L2});
+		TestUtil.waitUntilAllAreDown(gamepad, new int[] {GamepadEvent.BUTTON_R1, GamepadEvent.BUTTON_R2, GamepadEvent.BUTTON_L1, GamepadEvent.BUTTON_L2});
 		
 		// TEST 3
 		System.out.println("Press and hold START, SELECT, R3, L3 at the same time");
-		waitUntilAllAreDown(gamepad, new int[] {GamepadEvent.BUTTON_L3, GamepadEvent.BUTTON_R3, GamepadEvent.BUTTON_START, GamepadEvent.BUTTON_SELECT});
+		TestUtil.waitUntilAllAreDown(gamepad, new int[] {GamepadEvent.BUTTON_L3, GamepadEvent.BUTTON_R3, GamepadEvent.BUTTON_START, GamepadEvent.BUTTON_SELECT});
 		
 		// CLEANUP
 		gamepad.stopListening();
@@ -149,5 +133,18 @@ class DirectInputGamepadTest {
 		frame.dispose();
 		DeviceManager.getGamepads().forEach(Gamepad::stopListening);
 		DeviceManager.destroy();
+	}
+	
+	private static final Gamepad getDirectInputGamepad() {
+		
+		for(Gamepad gamepad : DeviceManager.getGamepads()) {
+			
+			if(gamepad instanceof DirectInputGamepad) {
+				
+				return gamepad;
+			}
+		}
+		
+		return null;
 	}
 }

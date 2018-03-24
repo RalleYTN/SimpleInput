@@ -25,7 +25,7 @@ package de.ralleytn.simple.input;
 
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Component.Identifier.Axis;
-
+import de.ralleytn.simple.input.internal.XInputGamepadButtonMapping;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import net.java.games.input.Event;
@@ -52,13 +52,29 @@ public class XInputGamepad extends Gamepad {
 
 	XInputGamepad(Controller controller) {
 		
-		super(controller);
+		super(controller, XInputGamepadButtonMapping.getDownButtonArraySize());
+	}
+	
+	@Override
+	protected int countButtons() {
+		
+		int buttonCount = 0;
+		
+		for(Component component : this.controller.getComponents()) {
+			
+			if(XInputGamepadButtonMapping.isValidButton(component.getIdentifier())) {
+				
+				buttonCount++;
+			}
+		}
+		
+		return buttonCount;
 	}
 	
 	@Override
 	protected void update() {
 		
-		this.updateCursorPosition(this.axisX, this.axisY, this.axisRX, this.axisRY);
+		this.mouseControl.updateCursorPosition(this.axisX, this.axisY, this.axisRX, this.axisRY);
 	}
 
 	@Override
@@ -72,9 +88,9 @@ public class XInputGamepad extends Gamepad {
 			
 			this.processPOVEvent(id, value);
 			
-		} else if(Gamepad.isButton(id)) {
+		} else if(XInputGamepadButtonMapping.isValidButton(id)) {
 			
-			int button = XInputGamepad.getGamepadButtonByIdentifier(id);
+			int button = XInputGamepadButtonMapping.getMap().get(id);
 			this.processButtonEvent(button, value);
 			       
 		} else if(Axis.Y.equals(id)) {
@@ -102,22 +118,6 @@ public class XInputGamepad extends Gamepad {
 			this.axisZ = value;
 		}
 	}
-	
-	private static final int getGamepadButtonByIdentifier(Identifier id) {
-		
-		return id == Identifier.Button._0  || id == Identifier.Button.A            ? GamepadEvent.BUTTON_A :
-			   id == Identifier.Button._1  || id == Identifier.Button.B            ? GamepadEvent.BUTTON_B :
-			   id == Identifier.Button._2  || id == Identifier.Button.X            ? GamepadEvent.BUTTON_X :
-			   id == Identifier.Button._3  || id == Identifier.Button.Y            ? GamepadEvent.BUTTON_Y :
-			   id == Identifier.Button._4  || id == Identifier.Button.LEFT_THUMB   ? GamepadEvent.BUTTON_L1 :
-			   id == Identifier.Button._5  || id == Identifier.Button.RIGHT_THUMB  ? GamepadEvent.BUTTON_R1 :
-			   id == Identifier.Button._6  || id == Identifier.Button.SELECT       ? GamepadEvent.BUTTON_SELECT :
-			   id == Identifier.Button._7  || id == Identifier.Button.START        ? GamepadEvent.BUTTON_START :
-			   id == Identifier.Button._8  || id == Identifier.Button.LEFT_THUMB3  ? GamepadEvent.BUTTON_L3 :
-			   id == Identifier.Button._9  || id == Identifier.Button.RIGHT_THUMB3 ? GamepadEvent.BUTTON_R3 :
-			   -1;
-	}
-	
 	public float getTriggerValue() {
 		
 		return this.axisZ;

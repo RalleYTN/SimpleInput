@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import de.ralleytn.simple.input.DeviceManager;
 import de.ralleytn.simple.input.Mouse;
+import de.ralleytn.simple.input.MouseEvent;
 
 class MouseTest {
 
@@ -51,7 +52,7 @@ class MouseTest {
 		
 		// TEST
 		System.out.println("Click and hold the left and right mouse button at the same time");
-		TestUtil.sleep(() -> !mouse.isLeftDown() || !mouse.isRightDown());
+		TestUtil.sleep(() -> !mouse.isButtonDown(MouseEvent.BUTTON_LEFT) || !mouse.isButtonDown(MouseEvent.BUTTON_RIGHT));
 		
 		// CLEANUP
 		mouse.stopListening();

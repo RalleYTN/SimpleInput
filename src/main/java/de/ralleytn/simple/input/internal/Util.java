@@ -25,6 +25,9 @@ package de.ralleytn.simple.input.internal;
 
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
@@ -40,9 +43,36 @@ import net.java.games.input.Component.Identifier.Axis;
  */
 public final class Util {
 
-	private static final Robot ROBOT = Util.createRobot();
+	public static final Robot ROBOT = Util.createRobot();
 	
 	private Util() {}
+	
+	public static final int getMaxValue(Collection<Integer> values) {
+		
+		int max = 0;
+		
+		for(int value : values) {
+			
+			if(value > max) {
+				
+				max = value;
+			}
+		}
+		
+		return max;
+	}
+	
+	public static final Map<Identifier, Integer> toMap(Object[] mapping) {
+		
+		Map<Identifier, Integer> map = new HashMap<>();
+		
+		for(int index = 0; index < mapping.length - 1; index += 2) {
+			
+			map.put((Identifier)mapping[index], (int)mapping[index + 1]);
+		}
+		
+		return map;
+	}
 	
 	/**
 	 * 
@@ -83,23 +113,7 @@ public final class Util {
 		return false;
 	}
 
-	/**
-	 * Sets the cursor position.
-	 * @param x X coordinate in pixel
-	 * @param y Y coordinate in pixel
-	 * @since 1.0.0
-	 */
-	public static final void setCursorPosition(int x, int y) {
-		
-		Util.ROBOT.mouseMove(x, y);
-	}
-	
-	/**
-	 * 
-	 * @return
-	 * @since 1.0.0
-	 */
-	public static final Robot createRobot() {
+	private static final Robot createRobot() {
 		
 		try {
 			

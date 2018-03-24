@@ -24,14 +24,15 @@
 package de.ralleytn.simple.input;
 
 import java.awt.MouseInfo;
+import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.ralleytn.simple.input.internal.MouseButtonMapping;
 import de.ralleytn.simple.input.internal.Util;
 import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Component.Identifier.Axis;
-import net.java.games.input.Component.Identifier.Button;
 import net.java.games.input.Controller;
 import net.java.games.input.Event;
 
@@ -43,17 +44,8 @@ import net.java.games.input.Event;
  */
 public class Mouse extends Device {
 
-	private static final Identifier[] VALID_BUTTONS = {
-			
-		Button.LEFT,
-		Button.MIDDLE,
-		Button.RIGHT
-	};
-	
 	private List<MouseListener> listeners;
-	private boolean leftDown;
-	private boolean rightDown;
-	private boolean middleDown;
+	private boolean[] buttonsDown;
 	private int buttonCount;
 	
 	Mouse(Controller controller) {
@@ -61,14 +53,22 @@ public class Mouse extends Device {
 		super(controller);
 		
 		this.listeners = new ArrayList<>();
+		this.buttonsDown = new boolean[MouseButtonMapping.getDownButtonArraySize()];
 		
 		for(Component component : controller.getComponents()) {
 			
-			if(Mouse.isButton(component.getIdentifier())) {
+			if(MouseButtonMapping.isValidButton(component.getIdentifier())) {
 				
 				this.buttonCount++;
 			}
 		}
+	}
+	
+	public static final void click(int button) {
+		
+		int mask = InputEvent.getMaskForButton(button);
+		Util.ROBOT.mousePress(mask);
+		Util.ROBOT.mouseRelease(mask);
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class Mouse extends Device {
 	 */
 	public static void setCursorPosition(int x, int y) {
 		
-		Util.setCursorPosition(x, y);
+		Util.ROBOT.mouseMove(x, y);
 	}
 	
 	@Override
@@ -136,20 +136,11 @@ public class Mouse extends Device {
 		Identifier id = component.getIdentifier();
 		float value = event.getValue();
 		
-		if(Button.LEFT.equals(id)) {
+		if(MouseButtonMapping.isValidButton(id)) {
 
-			this.leftDown = (value == 1.0F);
-			this.processButtonEvent(id, this.leftDown);
-			
-		} else if(Button.RIGHT.equals(id)) {
-			
-			this.rightDown = (value == 1.0F);
-			this.processButtonEvent(id, this.rightDown);
-			
-		} else if(Button.MIDDLE.equals(id)) {
-			
-			this.middleDown = (value == 1.0F);
-			this.processButtonEvent(id, this.middleDown);
+			int button = MouseButtonMapping.getMap().get(id);
+			this.buttonsDown[button] = (value == 1.0F);
+			this.processButtonEvent(id, this.buttonsDown[button]);
 			
 		} else if(Axis.X.equals(id)) {
 			
@@ -169,7 +160,7 @@ public class Mouse extends Device {
 	
 	private final void processButtonEvent(Identifier id, boolean buttonDown) {
 		
-		int button = Mouse.getButtonByIdentifier(id);
+		int button = MouseButtonMapping.getMap().get(id);
 		
 		if(buttonDown) {
 			
@@ -183,9 +174,9 @@ public class Mouse extends Device {
 	
 	private final void processMovementEvent(float delta) {
 		
-			   if(this.leftDown)   {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Mouse.getButtonByIdentifier(Identifier.Button.LEFT))));
-		} else if(this.rightDown)  {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Mouse.getButtonByIdentifier(Identifier.Button.RIGHT))));
-		} else if(this.middleDown) {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, Mouse.getButtonByIdentifier(Identifier.Button.MIDDLE))));
+			   if(this.buttonsDown[MouseEvent.BUTTON_LEFT])   {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, MouseButtonMapping.getMap().get(Identifier.Button.LEFT))));
+		} else if(this.buttonsDown[MouseEvent.BUTTON_RIGHT])  {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, MouseButtonMapping.getMap().get(Identifier.Button.RIGHT))));
+		} else if(this.buttonsDown[MouseEvent.BUTTON_MIDDLE]) {this.listeners.forEach(listener -> listener.onDrag(new MouseEvent(this, 0, delta, 0, MouseButtonMapping.getMap().get(Identifier.Button.MIDDLE))));
 		} else {
 			
 			this.listeners.forEach(listener -> listener.onMove(new MouseEvent(this, 0, delta, 0, -1)));
@@ -219,51 +210,8 @@ public class Mouse extends Device {
 		return MouseInfo.getPointerInfo().getLocation().y;
 	}
 	
-	/**
-	 * @return {@code true} if the left mouse button is currently pressed, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isLeftDown() {
+	public boolean isButtonDown(int button) {
 		
-		return this.leftDown;
-	}
-	
-	/**
-	 * @return {@code true} if the right mouse button is currently pressed, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isRightDown() {
-		
-		return this.rightDown;
-	}
-	
-	/**
-	 * @return {@code true} if the middle mouse button is currently pressed, else {@code false}
-	 * @since 1.0.0
-	 */
-	public boolean isMiddleDown() {
-		
-		return this.middleDown;
-	}
-	
-	private static final int getButtonByIdentifier(Identifier id) {
-		
-		return id == Identifier.Button.LEFT ? MouseEvent.BUTTON_LEFT :
-			   id == Identifier.Button.MIDDLE ? MouseEvent.BUTTON_MIDDLE :
-			   id == Identifier.Button.RIGHT ? MouseEvent.BUTTON_RIGHT :
-		       -1;
-	}
-	
-	private static final boolean isButton(Identifier id) {
-		
-		for(Identifier button : Mouse.VALID_BUTTONS) {
-			
-			if(button.equals(id)) {
-				
-				return true;
-			}
-		}
-		
-		return false;
+		return this.buttonsDown[button];
 	}
 }

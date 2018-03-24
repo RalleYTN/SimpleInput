@@ -27,6 +27,11 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.function.Supplier;
 
+import javax.swing.JFrame;
+
+import de.ralleytn.simple.input.Gamepad;
+import de.ralleytn.simple.input.Mouse;
+
 final class TestUtil {
 
 	public static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
@@ -43,5 +48,30 @@ final class TestUtil {
 				
 			} catch(InterruptedException exception) {}
 		}
+	}
+	
+	public static final void waitUntilAllAreDown(Gamepad gamepad, int[] buttons) {
+		
+		TestUtil.sleep(() -> {
+			
+			for(int button : buttons) {
+				
+				if(!gamepad.isButtonDown(button)) {
+					
+					return true;
+				}
+			}
+			
+			return false;
+		});
+	}
+	
+	public static final void doCursorControlTest(JFrame frame) {
+		
+		int screenWidth = TestUtil.SCREEN_SIZE.width;
+		int screenHeight = TestUtil.SCREEN_SIZE.height;
+		Mouse.setCursorPosition(screenWidth / 2, screenHeight / 2);
+		frame.setLocation((int)(Math.random() * (screenWidth - frame.getWidth())), (int)(Math.random() * (screenHeight - frame.getHeight())));
+		TestUtil.sleep(() -> !frame.getBounds().contains(Mouse.getX(), Mouse.getY()));
 	}
 }
