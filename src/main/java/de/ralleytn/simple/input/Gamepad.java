@@ -72,8 +72,7 @@ public abstract class Gamepad extends Device {
 	protected abstract int countButtons();
 	
 	/**
-	 * 
-	 * @return
+	 * @return an unmodifiable list of the {@linkplain GamepadListener}s that are attached to this gamepad.
 	 * @since 1.0.0
 	 */
 	public List<GamepadListener> getGamepadListeners() {
@@ -165,9 +164,9 @@ public abstract class Gamepad extends Device {
 	}
 
 	/**
-	 * 
-	 * @param button
-	 * @return
+	 * Checks if the given button is down.
+	 * @param button the button
+	 * @return {@code true} if the button is down, else {@code false}
 	 * @since 1.0.0
 	 */
 	public boolean isButtonDown(int button) {
@@ -184,6 +183,10 @@ public abstract class Gamepad extends Device {
 		return this.deadZone;
 	}
 	
+	/**
+	 * @return the {@linkplain MouseControl} instance that is attached to this gamepad.
+	 * @since 1.0.0
+	 */
 	public MouseControl getMouseControl() {
 		
 		return this.mouseControl;

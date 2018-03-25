@@ -161,8 +161,7 @@ public abstract class Device {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * @return the port number of this device (currently always {@code 0})
 	 * @since 1.0.0
 	 */
 	public int getPortNumber() {

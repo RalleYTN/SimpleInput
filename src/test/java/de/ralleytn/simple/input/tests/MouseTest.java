@@ -25,6 +25,7 @@ package de.ralleytn.simple.input.tests;
 
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import org.junit.jupiter.api.Test;
@@ -36,9 +37,35 @@ import de.ralleytn.simple.input.MouseEvent;
 class MouseTest {
 
 	@Test
+	public void testRemoveListeners() {
+		
+		
+	}
+	
+	@Test
+	public void testRobot() {
+		
+		JButton clickMe = new JButton("Click Me");
+		clickMe.addActionListener(event -> clickMe.setName("Clicked"));
+		
+		JFrame frame = new JFrame();
+		frame.setSize(100, 100);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.add(clickMe);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		
+		TestUtil.centerCursor();
+		Mouse.click(MouseEvent.BUTTON_LEFT);
+		
+		TestUtil.sleep(() -> !"Clicked".equals(clickMe.getName()));
+		
+		frame.dispose();
+	}
+	
+	@Test
 	public void testIsDown() {
 		
-		// SETUP
 		DeviceManager.create();
 		List<Mouse> mice = DeviceManager.getMice();
 		Mouse mouse = mice.get(0);
@@ -50,11 +77,9 @@ class MouseTest {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		
-		// TEST
 		System.out.println("Click and hold the left and right mouse button at the same time");
 		TestUtil.sleep(() -> !mouse.isButtonDown(MouseEvent.BUTTON_LEFT) || !mouse.isButtonDown(MouseEvent.BUTTON_RIGHT));
 		
-		// CLEANUP
 		mouse.stopListening();
 		frame.dispose();
 		DeviceManager.destroy();
@@ -64,17 +89,14 @@ class MouseTest {
 	@Test
 	public void testMouseListener() {
 		
-		// SETUP
 		DeviceManager.create();
 		MouseListenerTestFrame frame = new MouseListenerTestFrame();
 		DeviceManager.addMouseListener(frame);
 		DeviceManager.getMice().forEach(Mouse::startListening);
 		frame.setVisible(true);
 		
-		// WAIT UNTIL DONE
 		TestUtil.sleep(() -> frame.getCheckList().isAtLeastOneItemUnchecked());
 		
-		// CLEANUP
 		frame.dispose();
 		DeviceManager.getMice().forEach(Mouse::stopListening);
 		DeviceManager.destroy();

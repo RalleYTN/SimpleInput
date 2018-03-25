@@ -46,6 +46,7 @@ public final class DeviceManager {
 	private static ControllerEnvironment ENVIRONMENT;
 	private static List<Device> DEVICES;
 	private static ControllerListener CONTROLLER_LISTENER;
+	private static boolean CREATED;
 	
 	private DeviceManager() {}
 	
@@ -97,32 +98,51 @@ public final class DeviceManager {
 	/**
 	 * Creates the context.
 	 * Has to be done before using any other methods.
+	 * Does nothing if it was already created and not destroyed yet.
 	 * @since 1.0.0
 	 */
 	public static synchronized final void create() {
 		
-		DeviceManager.DEVICES = new ArrayList<>();
-		DeviceManager.CONTROLLER_LISTENER = new Adapter();
-		DeviceManager.ENVIRONMENT = ControllerEnvironment.getDefaultEnvironment();
-		DeviceManager.ENVIRONMENT.addControllerListener(DeviceManager.CONTROLLER_LISTENER);
-		
-		for(Controller controller : DeviceManager.ENVIRONMENT.getControllers()) {
+		if(!DeviceManager.CREATED) {
 			
-			DeviceManager.addDevice(controller);
+			DeviceManager.DEVICES = new ArrayList<>();
+			DeviceManager.CONTROLLER_LISTENER = new Adapter();
+			DeviceManager.ENVIRONMENT = ControllerEnvironment.getDefaultEnvironment();
+			DeviceManager.ENVIRONMENT.addControllerListener(DeviceManager.CONTROLLER_LISTENER);
+			
+			for(Controller controller : DeviceManager.ENVIRONMENT.getControllers()) {
+				
+				DeviceManager.addDevice(controller);
+			}
+			
+			DeviceManager.CREATED = true;
 		}
 	}
 
 	/**
 	 * Destroys the context.
 	 * Should be called once you are done using this library.
+	 * Does nothing if the {@link #create()} method wasn't called yet.
 	 * @since 1.0.0
 	 */
 	public static synchronized final void destroy() {
 		
-		DeviceManager.ENVIRONMENT.removeControllerListener(DeviceManager.CONTROLLER_LISTENER);
-		DeviceManager.CONTROLLER_LISTENER = null;
-		DeviceManager.ENVIRONMENT = null;
-		DeviceManager.DEVICES = null;
+		if(DeviceManager.CREATED) {
+			
+			DeviceManager.stopListening();
+			DeviceManager.ENVIRONMENT.removeControllerListener(DeviceManager.CONTROLLER_LISTENER);
+			DeviceManager.CONTROLLER_LISTENER = null;
+			DeviceManager.ENVIRONMENT = null;
+			DeviceManager.DEVICES = null;
+			DeviceManager.CREATED = false;
+		}
+	}
+	
+	private static final void stopListening() {
+		
+		DeviceManager.getMice().forEach(Mouse::stopListening);
+		DeviceManager.getKeyboards().forEach(Keyboard::stopListening);
+		DeviceManager.getGamepads().forEach(Gamepad::stopListening);
 	}
 	
 	/**
@@ -307,7 +327,7 @@ public final class DeviceManager {
 		@Override
 		public synchronized void controllerRemoved(ControllerEvent event) {
 			
-			// System.out.println("Removed " + event.getController().getName());
+			System.out.println("Removed " + event.getController().getName());
 			
 			List<Device> devices = new ArrayList<>();
 			DeviceManager.DEVICES.forEach(device -> {
@@ -328,7 +348,7 @@ public final class DeviceManager {
 		@Override
 		public synchronized void controllerAdded(ControllerEvent event) {
 
-			// System.out.println("Added " + event.getController().getName());
+			System.out.println("Added " + event.getController().getName());
 			
 			Controller controller = event.getController();
 			DeviceManager.addDevice(controller);

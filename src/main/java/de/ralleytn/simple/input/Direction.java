@@ -31,43 +31,12 @@ package de.ralleytn.simple.input;
  */
 public enum Direction {
 
-	/**
-	 * @since 1.0.0
-	 */
-	NORTH,
-	
-	/**
-	 * @since 1.0.0
-	 */
-	NORTH_EAST,
-	
-	/**
-	 * @since 1.0.0
-	 */
-	EAST,
-	
-	/**
-	 * @since 1.0.0
-	 */
-	SOUTH_EAST,
-	
-	/**
-	 * @since 1.0.0
-	 */
-	SOUTH,
-	
-	/**
-	 * @since 1.0.0
-	 */
-	SOUTH_WEST,
-	
-	/**
-	 * @since 1.0.0
-	 */
-	WEST,
-	
-	/**
-	 * @since 1.0.0
-	 */
-	NORTH_WEST;
+	/** @since 1.0.0 */ NORTH,
+	/** @since 1.0.0 */ NORTH_EAST,
+	/** @since 1.0.0 */ EAST,
+	/** @since 1.0.0 */ SOUTH_EAST,
+	/** @since 1.0.0 */ SOUTH,
+	/** @since 1.0.0 */ SOUTH_WEST,
+	/** @since 1.0.0 */ WEST,
+	/** @since 1.0.0 */ NORTH_WEST;
 }

@@ -33,6 +33,10 @@ public abstract class DeviceEvent {
 
 	protected final Device device;
 	
+	/**
+	 * @param device the input device that fired this event
+	 * @since 1.0.0
+	 */
 	public DeviceEvent(Device device) {
 		
 		this.device = device;

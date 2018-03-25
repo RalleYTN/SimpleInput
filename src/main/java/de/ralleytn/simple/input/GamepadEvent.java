@@ -121,6 +121,12 @@ public class GamepadEvent extends DeviceEvent {
 	 */
 	public static final int BUTTON_L3 = 10;
 	
+	/**
+	 * No button
+	 * @since 1.0.0
+	 */
+	public static final int BUTTON_NONE = -1;
+	
 	private final Direction direction;
 	private final int analogStick;
 	private final int button;

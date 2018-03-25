@@ -23,6 +23,9 @@
  */
 package de.ralleytn.simple.input.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.function.Supplier;
@@ -30,13 +33,39 @@ import java.util.function.Supplier;
 import javax.swing.JFrame;
 
 import de.ralleytn.simple.input.Gamepad;
+import de.ralleytn.simple.input.GamepadEvent;
 import de.ralleytn.simple.input.Mouse;
+import de.ralleytn.simple.input.MouseControl;
 
 final class TestUtil {
 
 	public static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
 	
 	private TestUtil() {}
+	
+	private static final void testMouseControl(MouseControl mouseControl) {
+		
+		assertTrue(mouseControl.isEnabled());
+		assertEquals(GamepadEvent.ANALOG_STICK_LEFT, mouseControl.getAnalogStick());
+		assertEquals(5.0F, mouseControl.getSensity());
+		assertEquals(GamepadEvent.BUTTON_X, mouseControl.getLeftMouseButtonMapping());
+		assertEquals(GamepadEvent.BUTTON_NONE, mouseControl.getRightMouseButtonMapping());
+		assertEquals(GamepadEvent.BUTTON_NONE, mouseControl.getMiddleMouseButtonMapping());
+	}
+	
+	public static final MouseControl setupMouseControl(Gamepad gamepad) {
+		
+		MouseControl mouseControl = gamepad.getMouseControl();
+		mouseControl.setEnabled(true);
+		mouseControl.setAnalogStick(GamepadEvent.ANALOG_STICK_LEFT);
+		mouseControl.setSensity(5.0F);
+		mouseControl.mapLeftMouseButtonTo(GamepadEvent.BUTTON_X);
+		mouseControl.mapRightMouseButtonTo(GamepadEvent.BUTTON_NONE);
+		
+		TestUtil.testMouseControl(mouseControl);
+		
+		return mouseControl;
+	}
 	
 	public static final void sleep(Supplier<Boolean> callback) {
 		
@@ -66,11 +95,18 @@ final class TestUtil {
 		});
 	}
 	
-	public static final void doCursorControlTest(JFrame frame) {
+	public static final void centerCursor() {
 		
 		int screenWidth = TestUtil.SCREEN_SIZE.width;
 		int screenHeight = TestUtil.SCREEN_SIZE.height;
 		Mouse.setCursorPosition(screenWidth / 2, screenHeight / 2);
+	}
+	
+	public static final void doCursorControlTest(JFrame frame) {
+		
+		int screenWidth = TestUtil.SCREEN_SIZE.width;
+		int screenHeight = TestUtil.SCREEN_SIZE.height;
+		TestUtil.centerCursor();
 		frame.setLocation((int)(Math.random() * (screenWidth - frame.getWidth())), (int)(Math.random() * (screenHeight - frame.getHeight())));
 		TestUtil.sleep(() -> !frame.getBounds().contains(Mouse.getX(), Mouse.getY()));
 	}

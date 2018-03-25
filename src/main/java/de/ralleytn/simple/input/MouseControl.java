@@ -29,6 +29,12 @@ import java.awt.event.InputEvent;
 
 import de.ralleytn.simple.input.internal.Util;
 
+/**
+ * Responsible for controlling the mouse with a gamepad.
+ * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public final class MouseControl {
 
 	private int lmbMapping;
@@ -44,34 +50,73 @@ public final class MouseControl {
 		this.sensity = 5.0F;
 		this.lmbMapping = GamepadEvent.BUTTON_X;
 		this.rmbMapping = GamepadEvent.BUTTON_A;
-		this.mmbMapping = -1;
+		this.mmbMapping = GamepadEvent.BUTTON_NONE;
 	}
 	
+	/**
+	 * Enables or disables the mouse control.
+	 * Default is {@code false}.
+	 * @param enabled {@code true} = enabled, {@code false} = disabled
+	 * @since 1.0.0
+	 */
 	public void setEnabled(boolean enabled) {
 		
 		this.enabled = enabled;
 	}
 	
+	/**
+	 * Sets which analog stick will be used to control the mouse cursor.
+	 * Default is {@link GamepadEvent#ANALOG_STICK_LEFT}.
+	 * @param analogStick the analog stick
+	 * @since 1.0.0
+	 */
 	public void setAnalogStick(int analogStick) {
 		
 		this.analogStick = analogStick;
 	}
 	
+	/**
+	 * Sets the cursor sensity.
+	 * The cursor moves faster with higher sensity.
+	 * Cursor control can be inverted by setting a negative value.
+	 * If the sensity is {@code 0.0F}, the cursor will not move.
+	 * Default is {@code 5.0F}.
+	 * @param sensity the sensity
+	 * @since 1.0.0
+	 */
 	public void setSensity(float sensity) {
 		
 		this.sensity = sensity;
 	}
 	
+	/**
+	 * Maps the left mouse button to a button on the gamepad.
+	 * Default is {@link GamepadEvent#BUTTON_X}.
+	 * @param gamepadButton the gamepad button
+	 * @since 1.0.0
+	 */
 	public void mapLeftMouseButtonTo(int gamepadButton) {
 		
 		this.lmbMapping = gamepadButton;
 	}
 	
+	/**
+	 * Maps the right mouse button to a button on the gamepad.
+	 * Default is {@link GamepadEvent#BUTTON_A}.
+	 * @param gamepadButton the gamepad button
+	 * @since 1.0.0
+	 */
 	public void mapRightMouseButtonTo(int gamepadButton) {
 		
 		this.rmbMapping = gamepadButton;
 	}
 	
+	/**
+	 * Maps the middle mouse button to a button on the gamepad.
+	 * Default is {@link GamepadEvent#BUTTON_NONE}.
+	 * @param gamepadButton the gamepad button
+	 * @since 1.0.0
+	 */
 	public void mapMiddleMouseButtonTo(int gamepadButton) {
 		
 		this.mmbMapping = gamepadButton;
@@ -124,31 +169,55 @@ public final class MouseControl {
 		}
 	}
 	
+	/**
+	 * @return {@code true} if the mouse control is enabled, else {@code false}
+	 * @since 1.0.0
+	 */
 	public boolean isEnabled() {
 		
 		return this.enabled;
 	}
 	
+	/**
+	 * @return the analog stick with which the mouse is controlled
+	 * @since 1.0.0
+	 */
 	public int getAnalogStick() {
 		
 		return this.analogStick;
 	}
 	
+	/**
+	 * @return the cursor sensity
+	 * @since 1.0.0
+	 */
 	public float getSensity() {
 		
 		return this.sensity;
 	}
 	
+	/**
+	 * @return the gamepad button that is mapped to the left mouse button
+	 * @since 1.0.0
+	 */
 	public int getLeftMouseButtonMapping() {
 		
 		return this.lmbMapping;
 	}
 	
+	/**
+	 * @return the gamepad button that is mapped to the right mouse button
+	 * @since 1.0.0
+	 */
 	public int getRightMouseButtonMapping() {
 		
 		return this.rmbMapping;
 	}
 	
+	/**
+	 * @return the gamepad button that is mapped to the middle mouse button
+	 * @since 1.0.0
+	 */
 	public int getMiddleMouseButtonMapping() {
 		
 		return this.mmbMapping;

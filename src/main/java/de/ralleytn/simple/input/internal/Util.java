@@ -43,10 +43,19 @@ import net.java.games.input.Component.Identifier.Axis;
  */
 public final class Util {
 
+	/**
+	 * Globally used instance of {@linkplain Robot}
+	 * @since 1.0.0
+	 */
 	public static final Robot ROBOT = Util.createRobot();
 	
 	private Util() {}
 	
+	/**
+	 * @param values a collection of integers
+	 * @return the highest value in the given collection
+	 * @since 1.0.0
+	 */
 	public static final int getMaxValue(Collection<Integer> values) {
 		
 		int max = 0;
@@ -62,6 +71,12 @@ public final class Util {
 		return max;
 	}
 	
+	/**
+	 * Creates an instance of {@linkplain Map} based on an object array which will be used as button or key mapping. 
+	 * @param mapping the object array
+	 * @return the created instance of {@linkplain Map}
+	 * @since 1.0.0
+	 */
 	public static final Map<Identifier, Integer> toMap(Object[] mapping) {
 		
 		Map<Identifier, Integer> map = new HashMap<>();
@@ -75,42 +90,36 @@ public final class Util {
 	}
 	
 	/**
-	 * 
-	 * @param controller
-	 * @return
+	 * If a gamepad has an RX, RY and a Z axis, it is probably an XInput gamepad.
+	 * THis method assumes that the controller has the type {@link Type#GAMEPAD}.
+	 * @param controller the abstract {@linkplain Controller} instance
+	 * @return {@code true} if the given instance of {@linkplain Controller} is probably an XInput gamepad, else {@code false}
 	 * @since 1.0.0
 	 */
 	public static final boolean isXInput(Controller controller) {
+
+		Component[] components = controller.getComponents();
+		boolean hasXAxis = false;
+		boolean hasYAxis = false;
+		boolean hasZAxis = false;
+		boolean hasRXAxis = false;
+		boolean hasRYAxis = false;
+		boolean hasPOV = false;
 		
-		Type type = controller.getType();
-		
-		if(Type.GAMEPAD.equals(type)) {
+		for(Component component : components) {
 			
-			Component[] components = controller.getComponents();
-			boolean hasXAxis = false;
-			boolean hasYAxis = false;
-			boolean hasZAxis = false;
-			boolean hasRXAxis = false;
-			boolean hasRYAxis = false;
-			boolean hasPOV = false;
+			Identifier id = component.getIdentifier();
 			
-			for(Component component : components) {
-				
-				Identifier id = component.getIdentifier();
-				
-					   if(Axis.X.equals(id))   {hasXAxis = true;
-				} else if(Axis.Y.equals(id))   {hasYAxis = true;
-				} else if(Axis.RX.equals(id))  {hasRXAxis = true;
-				} else if(Axis.RY.equals(id))  {hasRYAxis = true;
-				} else if(Axis.Z.equals(id))   {hasZAxis = true;
-				} else if(Axis.POV.equals(id)) {hasPOV = true;
-				}
+				   if(Axis.X.equals(id))   {hasXAxis = true;
+			} else if(Axis.Y.equals(id))   {hasYAxis = true;
+			} else if(Axis.RX.equals(id))  {hasRXAxis = true;
+			} else if(Axis.RY.equals(id))  {hasRYAxis = true;
+			} else if(Axis.Z.equals(id))   {hasZAxis = true;
+			} else if(Axis.POV.equals(id)) {hasPOV = true;
 			}
-			
-			return hasPOV && hasRXAxis && hasRYAxis && hasXAxis && hasYAxis && hasZAxis;
 		}
-		
-		return false;
+			
+		return hasPOV && hasRXAxis && hasRYAxis && hasXAxis && hasYAxis && hasZAxis;
 	}
 
 	private static final Robot createRobot() {
@@ -121,6 +130,7 @@ public final class Util {
 			
 		} catch(AWTException exception) {
 			
+			// WILL NEVER HAPPEN!
 			return null;
 		}
 	}

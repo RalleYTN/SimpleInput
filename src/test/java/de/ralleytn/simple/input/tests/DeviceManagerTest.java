@@ -40,7 +40,6 @@ class DeviceManagerTest {
 	@Test
 	public void testGetMouseByName() {
 		
-		// SETUP
 		DeviceManager.create();
 		List<Mouse> mice = DeviceManager.getMice();
 		int miceWithThatName = 0;
@@ -59,18 +58,15 @@ class DeviceManagerTest {
 			}
 		}
 		
-		// DO TEST
 		List<Mouse> foundMice = DeviceManager.getMiceByName(mouseName);
 		assertEquals(miceWithThatName, foundMice.size());
 		
-		// CLEANUP
 		DeviceManager.destroy();
 	}
 	
 	@Test
 	public void testGetKeyboardByName() {
 		
-		// SETUP
 		DeviceManager.create();
 		List<Keyboard> keyboards = DeviceManager.getKeyboards();
 		int keyboardsWithThatName = 0;
@@ -89,18 +85,15 @@ class DeviceManagerTest {
 			}
 		}
 		
-		// DO TEST
 		List<Keyboard> foundKeyboards = DeviceManager.getKeyboardsByName(keyboardName);
 		assertEquals(keyboardsWithThatName, foundKeyboards.size());
 		
-		// CLEANUP
 		DeviceManager.destroy();
 	}
 	
 	@Test
 	public void testGetGamepadByName() {
 		
-		// SETUP
 		DeviceManager.create();
 		List<Gamepad> gamepads = DeviceManager.getGamepads();
 		int gamepadsWithThatName = 0;
@@ -119,22 +112,20 @@ class DeviceManagerTest {
 			}
 		}
 		
-		// DO TEST
 		List<Gamepad> foundGamepads = DeviceManager.getGamepadsByName(gamepadName);
 		assertEquals(gamepadsWithThatName, foundGamepads.size());
 		
-		// CLEANUP
 		DeviceManager.destroy();
 	}
 	
+	// FIXME
+	// ==== 18.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+	// getController().getPortNumber() always returns 0. Why?
+	// ====
+	
 	@Test
 	public void testGetMice() {
-		
-		// FIXME
-		// ==== 18.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
-		// getController().getPortNumber() always returns 0. Why?
-		// ====
-		
+
 		DeviceManager.create();
 		List<Mouse> mice = DeviceManager.getMice();
 		System.out.println("==== " + mice.size() + " Mouse/Mice ====");
@@ -159,12 +150,7 @@ class DeviceManagerTest {
 	
 	@Test
 	public void testGetKeyboards() {
-		
-		// FIXME
-		// ==== 18.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
-		// getController().getPortNumber() always returns 0. Why?
-		// ====
-				
+	
 		DeviceManager.create();
 		List<Keyboard> keyboards = DeviceManager.getKeyboards();
 		System.out.println("==== " + keyboards.size() + " Keyboard(s) ====");
@@ -188,11 +174,6 @@ class DeviceManagerTest {
 	
 	@Test
 	public void testGetGamepads() {
-		
-		// FIXME
-		// ==== 18.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
-		// getController().getPortNumber() always returns 0. Why?
-		// ====
 				
 		DeviceManager.create();
 		List<Gamepad> gamepads = DeviceManager.getGamepads();

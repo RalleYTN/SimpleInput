@@ -32,6 +32,12 @@ import net.java.games.input.Component.Identifier;
 
 import static de.ralleytn.simple.input.KeyboardEvent.*;
 
+/**
+ * Maps the JInput identifiers to the SimpleInput constants.
+ * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public final class KeyboardKeyMapping {
 
 	private static final Object[] MAPPING = {
@@ -140,16 +146,29 @@ public final class KeyboardKeyMapping {
 	
 	private KeyboardKeyMapping() {}
 	
+	/**
+	 * @return the key mapping
+	 * @since 1.0.0
+	 */
 	public static final Map<Identifier, Integer> getMap() {
 		
 		return KeyboardKeyMapping.MAP;
 	}
 	
+	/**
+	 * @return the size for the boolean array that remembers which keys are currently down
+	 * @since 1.0.0
+	 */
 	public static final int getDownKeyArraySize() {
 		
 		return Util.getMaxValue(KeyboardKeyMapping.MAP.values()) + 1;
 	}
 	
+	/**
+	 * @param id the JInput identifier
+	 * @return {@code true} if the key for the JInput identifier is in the mapping
+	 * @since 1.0.0
+	 */
 	public static final boolean isValidKey(Identifier id) {
 		
 		return KeyboardKeyMapping.MAP.containsKey(id);

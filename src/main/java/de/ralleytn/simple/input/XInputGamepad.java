@@ -37,7 +37,7 @@ import net.java.games.input.Event;
 // ====
 
 /**
- * 
+ * Represents a gamepad that uses the XInput API.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
  * @version 1.0.0
  * @since 1.0.0
@@ -118,6 +118,16 @@ public class XInputGamepad extends Gamepad {
 			this.axisZ = value;
 		}
 	}
+	
+	/**
+	 * As of version 1.0.0 of SimpleInput, this method will not return a correct value for now.
+	 * JInput doesn't have support for the XInput API (yet).
+	 * Instead this method will return the sum of LT and RT.
+	 * LT and RT can only have the values {@code -1.0F}, {@code 0.0F} and {@code 1.0F}.
+	 * @return {@code -1.0F} if the LT button is down but the RT isn't, {@code 0.0F} if both triggers are down or not used and {@code 1.0F}
+	 * 		   if the RT button is down but LT isn't
+	 * @since 1.0.0
+	 */
 	public float getTriggerValue() {
 		
 		return this.axisZ;

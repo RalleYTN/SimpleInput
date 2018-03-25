@@ -132,13 +132,19 @@ public class KeyboardEvent extends DeviceEvent {
 	/** @since 1.0.0 */ public static final int KEY_APOSTROPHE = 222;
 	/** @since 1.0.0 */ public static final int KEY_APPS = 93;
 	
+	/**
+	 * No key
+	 * @since 1.0.0
+	 */
+	public static final int KEY_NONE = -1;
 	
 	private final int keyCode;
 	private final String keyName;
 	
 	/**
 	 * @param device the device that fired this event
-	 * @param keyCode 
+	 * @param keyCode the code of the key that is associated with this event
+	 * @param keyName the name of the key that is associated with this event
 	 * @since 1.0.0
 	 */
 	public KeyboardEvent(Device device, int keyCode, String keyName) {
@@ -154,7 +160,7 @@ public class KeyboardEvent extends DeviceEvent {
 	 * @since 1.0.0
 	 */
 	public final int getKeyCode() {
-		
+
 		return this.keyCode;
 	}
 	

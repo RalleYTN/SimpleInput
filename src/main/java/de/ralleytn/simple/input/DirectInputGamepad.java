@@ -31,7 +31,7 @@ import net.java.games.input.Controller;
 import net.java.games.input.Event;
 
 /**
- * 
+ * Represents a gamepad that uses the DirectInput API.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
  * @version 1.0.0
  * @since 1.0.0

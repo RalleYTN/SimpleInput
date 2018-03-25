@@ -38,19 +38,25 @@ public class MouseEvent extends DeviceEvent {
 	 * Left mouse button
 	 * @since 1.0.0
 	 */
-	public static final int BUTTON_LEFT = 0;
+	public static final int BUTTON_LEFT = 1;
 	
 	/**
 	 * Right mouse button
 	 * @since 1.0.0
 	 */
-	public static final int BUTTON_RIGHT = 2;
+	public static final int BUTTON_RIGHT = 3;
 	
 	/**
 	 * Middle mouse button
 	 * @since 1.0.0
 	 */
-	public static final int BUTTON_MIDDLE = 1;
+	public static final int BUTTON_MIDDLE = 2;
+	
+	/**
+	 * No button
+	 * @since 1.0.0
+	 */
+	public static final int BUTTON_NONE = -1;
 	
 	private final float deltaX;
 	private final float deltaY;

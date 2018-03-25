@@ -23,7 +23,10 @@
  */
 package de.ralleytn.simple.input;
 
+import java.awt.event.KeyEvent;
+import java.awt.Robot;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.ralleytn.simple.input.internal.KeyboardKeyMapping;
@@ -52,9 +55,64 @@ public class Keyboard extends Device {
 		this.downKeys = new boolean[KeyboardKeyMapping.getDownKeyArraySize()];
 	}
 	
+	/**
+	 * Uses the {@linkplain Robot} class to type the given text.
+	 * Only works for simple letters with upper and lower case and a period.
+	 * @param text a text
+	 * @since 1.0.0
+	 */
+	public static final void type(String text) {
+		
+		for(char character : text.toCharArray()) {
+			
+			boolean upperCase = Character.isUpperCase(character);
+			int keyCode = KeyEvent.getExtendedKeyCodeForChar(character);
+			
+			if(KeyEvent.CHAR_UNDEFINED != keyCode) {
+				
+				if(upperCase) {
+					
+					Keyboard.press(KeyboardEvent.KEY_SHIFT);
+					Keyboard.type(keyCode);
+					Keyboard.release(KeyboardEvent.KEY_SHIFT);
+					
+				} else {
+					
+					Keyboard.type(keyCode);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Uses the {@linkplain Robot} class to type the given key.
+	 * @param key the key
+	 * @since 1.0.0
+	 */
 	public static final void type(int key) {
 
+		Keyboard.press(key);
+		Keyboard.release(key);
+	}
+	
+	/**
+	 * Uses the {@linkplain Robot} class to press and hold a key.
+	 * Don't forget to call {@link #release(int)}.
+	 * @param key the key
+	 * @since 1.0.0
+	 */
+	public static final void press(int key) {
+
 		Util.ROBOT.keyPress(key);
+	}
+	
+	/**
+	 * Releases a key that is held down by the {@link #press(int)} method.
+	 * @param key the key
+	 * @since 1.0.0
+	 */
+	public static final void release(int key) {
+		
 		Util.ROBOT.keyRelease(key);
 	}
 	
@@ -63,6 +121,15 @@ public class Keyboard extends Device {
 		
 		this.listeners.forEach(listener -> listener.onRemove());
 		this.stopListening();
+	}
+	
+	/**
+	 * @return an unmodifiable list of all {@linkplain KeyboardListener}s that are attached to this keyboard
+	 * @since 1.0.0
+	 */
+	public List<KeyboardListener> getKeyboardListeners() {
+		
+		return Collections.unmodifiableList(this.listeners);
 	}
 	
 	/**

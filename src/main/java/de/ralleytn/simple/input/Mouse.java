@@ -25,7 +25,9 @@ package de.ralleytn.simple.input;
 
 import java.awt.MouseInfo;
 import java.awt.event.InputEvent;
+import java.awt.Robot;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.ralleytn.simple.input.internal.MouseButtonMapping;
@@ -64,6 +66,11 @@ public class Mouse extends Device {
 		}
 	}
 	
+	/**
+	 * Clicks the given mouse button using the {@linkplain Robot} class.
+	 * @param button the mouse button
+	 * @since 1.0.0
+	 */
 	public static final void click(int button) {
 		
 		int mask = InputEvent.getMaskForButton(button);
@@ -210,8 +217,22 @@ public class Mouse extends Device {
 		return MouseInfo.getPointerInfo().getLocation().y;
 	}
 	
+	/**
+	 * @param button the button
+	 * @return {@code true} if the given button is down, else {@code false}
+	 * @since 1.0.0
+	 */
 	public boolean isButtonDown(int button) {
 		
 		return this.buttonsDown[button];
+	}
+	
+	/**
+	 * @return an unmodifiable list of all {@linkplain MouseListener}s that are attached to this mouse.
+	 * @since 1.0.0
+	 */
+	public List<MouseListener> getMouseListeners() {
+		
+		return Collections.unmodifiableList(this.listeners);
 	}
 }
