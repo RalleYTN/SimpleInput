@@ -36,14 +36,14 @@ import net.java.games.input.Event;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class DirectInputGamepad extends Gamepad {
+public class DefaultGamepad extends Gamepad {
 
 	private float axisX;
 	private float axisY;
 	private float axisZ;
 	private float axisRZ;
 
-	DirectInputGamepad(Controller controller) {
+	DefaultGamepad(Controller controller) {
 		
 		super(controller, DirectInputGamepadButtonMapping.getDownButtonArraySize());
 	}

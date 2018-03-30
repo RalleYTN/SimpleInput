@@ -25,7 +25,7 @@ package de.ralleytn.simple.input.tests;
 
 import de.ralleytn.simple.input.GamepadEvent;
 
-class DirectInputGamepadListenerTestFrame extends GamepadListenerTestFrame {
+class DefaultGamepadListenerTestFrame extends GamepadListenerTestFrame {
 
 	private static final long serialVersionUID = -2912829526355959130L;
 	
@@ -37,9 +37,9 @@ class DirectInputGamepadListenerTestFrame extends GamepadListenerTestFrame {
 		"L1", "L2", "L3"
 	};
 	
-	public DirectInputGamepadListenerTestFrame() {
+	public DefaultGamepadListenerTestFrame() {
 		
-		super(DirectInputGamepadListenerTestFrame.BUTTON_NAMES);
+		super(DefaultGamepadListenerTestFrame.BUTTON_NAMES);
 	}
 
 	@Override

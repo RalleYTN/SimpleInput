@@ -37,12 +37,6 @@ import de.ralleytn.simple.input.Keyboard;
 import de.ralleytn.simple.input.KeyboardEvent;
 
 class KeyboardTest {
-
-	@Test
-	public void testRemoveListeners() {
-		
-		
-	}
 	
 	@Test
 	public void testIsDown() {

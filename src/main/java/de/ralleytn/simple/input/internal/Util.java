@@ -99,6 +99,7 @@ public final class Util {
 	public static final boolean isXInput(Controller controller) {
 
 		Component[] components = controller.getComponents();
+		
 		boolean hasXAxis = false;
 		boolean hasYAxis = false;
 		boolean hasZAxis = false;

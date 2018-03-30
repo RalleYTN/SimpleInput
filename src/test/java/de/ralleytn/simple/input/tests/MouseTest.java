@@ -35,12 +35,6 @@ import de.ralleytn.simple.input.Mouse;
 import de.ralleytn.simple.input.MouseEvent;
 
 class MouseTest {
-
-	@Test
-	public void testRemoveListeners() {
-		
-		
-	}
 	
 	@Test
 	public void testRobot() {

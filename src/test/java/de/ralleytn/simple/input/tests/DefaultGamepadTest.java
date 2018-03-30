@@ -31,7 +31,7 @@ import javax.swing.JFrame;
 import org.junit.jupiter.api.Test;
 
 import de.ralleytn.simple.input.DeviceManager;
-import de.ralleytn.simple.input.DirectInputGamepad;
+import de.ralleytn.simple.input.DefaultGamepad;
 import de.ralleytn.simple.input.Gamepad;
 import de.ralleytn.simple.input.GamepadAdapter;
 import de.ralleytn.simple.input.GamepadEvent;
@@ -42,15 +42,9 @@ import de.ralleytn.simple.input.MouseControl;
 // Still needs testing with Steam controller
 // ====
 
-class DirectInputGamepadTest {
+class DefaultGamepadTest {
 	
 	private boolean gamepadRemoved;
-	
-	@Test
-	public void testRemoveListeners() {
-		
-		
-	}
 	
 	@Test
 	public void testRemove() {
@@ -62,7 +56,7 @@ class DirectInputGamepadTest {
 			@Override
 			public void onRemove() {
 				
-				DirectInputGamepadTest.this.gamepadRemoved = true;
+				DefaultGamepadTest.this.gamepadRemoved = true;
 			}
 		});
 		gamepad.startListening();
@@ -137,7 +131,7 @@ class DirectInputGamepadTest {
 	public void testGamepadListener() {
 		
 		DeviceManager.create();
-		DirectInputGamepadListenerTestFrame frame = new DirectInputGamepadListenerTestFrame();
+		DefaultGamepadListenerTestFrame frame = new DefaultGamepadListenerTestFrame();
 		DeviceManager.addGamepadListener(frame);
 		DeviceManager.getGamepads().forEach(Gamepad::startListening);
 		frame.setVisible(true);
@@ -156,7 +150,7 @@ class DirectInputGamepadTest {
 		
 		for(Gamepad gamepad : DeviceManager.getGamepads()) {
 			
-			if(gamepad instanceof DirectInputGamepad) {
+			if(gamepad instanceof DefaultGamepad) {
 				
 				return gamepad;
 			}

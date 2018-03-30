@@ -47,12 +47,6 @@ class XInputGamepadTest {
 	private boolean gamepadRemoved;
 	
 	@Test
-	public void testRemoveListeners() {
-		
-		
-	}
-	
-	@Test
 	public void testRemove() {
 		
 		DeviceManager.create();

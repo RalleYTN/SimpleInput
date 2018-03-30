@@ -61,8 +61,8 @@ public final class DeviceManager {
 		
 			   if(type == Type.MOUSE)    {DeviceManager.DEVICES.add(new Mouse(controller));
 		} else if(type == Type.KEYBOARD) {DeviceManager.DEVICES.add(new Keyboard(controller));
-		} else if(type == Type.STICK)    {DeviceManager.DEVICES.add(new DirectInputGamepad(controller));
-		} else if(type == Type.GAMEPAD)  {DeviceManager.DEVICES.add(Util.isXInput(controller) ? new XInputGamepad(controller) : new DirectInputGamepad(controller));
+		} else if(type == Type.STICK)    {DeviceManager.DEVICES.add(new DefaultGamepad(controller));
+		} else if(type == Type.GAMEPAD)  {DeviceManager.DEVICES.add(Util.isXInput(controller) ? new XInputGamepad(controller) : new DefaultGamepad(controller));
 		}
 	}
 	
