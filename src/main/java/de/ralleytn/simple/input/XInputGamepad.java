@@ -120,7 +120,6 @@ public class XInputGamepad extends Gamepad {
 	}
 	
 	/**
-	 * As of version 1.0.0 of SimpleInput, this method will not return a correct value for now.
 	 * JInput doesn't have support for the XInput API (yet).
 	 * Instead this method will return the sum of LT and RT.
 	 * LT and RT can only have the values {@code -1.0F}, {@code 0.0F} and {@code 1.0F}.
