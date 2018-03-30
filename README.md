@@ -64,4 +64,5 @@ SOFTWARE.
 ## Links
 
 - [Download](https://github.com/RalleYTN/SimpleInput/releases)
+- [Wiki](https://github.com/RalleYTN/SimpleInput/wiki)
 - [Online Documentation](https://ralleytn.github.io/SimpleInput/)
