@@ -23,36 +23,33 @@
  */
 package de.ralleytn.simple.input;
 
+import static de.ralleytn.simple.input.XIGamepadEvent.*;
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Component.Identifier.Axis;
-import de.ralleytn.simple.input.internal.XInputGamepadButtonMapping;
+import de.ralleytn.simple.input.internal.Util;
+import de.ralleytn.simple.input.internal.XIGamepadButtonMapping;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import net.java.games.input.Event;
 
-// FIXME
-// ==== 23.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
-// Since jinput has no support for XInput yet, I can not get the values for the left and right trigger buttons individually.
-// If someone has the time to make an XInput environment plugin for jinput, I would be really happy.
-// ====
-
 /**
  * Represents a gamepad that uses the XInput API.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
-public class XInputGamepad extends Gamepad {
+public class XIGamepad extends Gamepad {
 
 	private float axisX;
 	private float axisY;
 	private float axisRX;
 	private float axisRY;
 	private float axisZ;
+	private float axisRZ;
 
-	XInputGamepad(Controller controller) {
+	XIGamepad(Controller controller) {
 		
-		super(controller, XInputGamepadButtonMapping.getDownButtonArraySize());
+		super(controller, XIGamepadButtonMapping.getDownButtonArraySize(Util.hasNoNavigation(controller)), new XIMouseControl());
 	}
 	
 	@Override
@@ -62,7 +59,7 @@ public class XInputGamepad extends Gamepad {
 		
 		for(Component component : this.controller.getComponents()) {
 			
-			if(XInputGamepadButtonMapping.isValidButton(component.getIdentifier())) {
+			if(XIGamepadButtonMapping.isValidButton(component.getIdentifier(), this.hasNoNavigation())) {
 				
 				buttonCount++;
 			}
@@ -88,47 +85,107 @@ public class XInputGamepad extends Gamepad {
 			
 			this.processPOVEvent(id, value);
 			
-		} else if(XInputGamepadButtonMapping.isValidButton(id)) {
+		} else if(XIGamepadButtonMapping.isValidButton(id, this.hasNoNavigation())) {
 			
-			int button = XInputGamepadButtonMapping.getMap().get(id);
+			int button = XIGamepadButtonMapping.getMap(this.hasNoNavigation()).get(id);
 			this.processButtonEvent(button, value);
 			       
 		} else if(Axis.Y.equals(id)) {
 			
 			this.axisY = Gamepad.isDead(value) ? 0.0F : value;
-			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY);
+			Direction direction = XIGamepadButtonMapping.getAnalogStickDirection(value, this.axisX, this.axisY);
+			
+			if(direction != null) {
+				
+				this.processAnalogStickEvent(ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY, direction);
+			}
 			
 		} else if(Axis.X.equals(id)) {
 			
 			this.axisX = Gamepad.isDead(value) ? 0.0F : value;
-			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY);
+			Direction direction = XIGamepadButtonMapping.getAnalogStickDirection(value, this.axisX, this.axisY);
+			
+			if(direction != null) {
+				
+				this.processAnalogStickEvent(ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY, direction);
+			}
 			
 		} else if(Axis.RX.equals(id)) {
 			
 			this.axisRX = Gamepad.isDead(value) ? 0.0F : value;
-			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisRX, this.axisRY);
+			Direction direction = XIGamepadButtonMapping.getAnalogStickDirection(value, this.axisRX, this.axisRY);
+			
+			if(direction != null) {
+				
+				this.processAnalogStickEvent(ANALOG_STICK_RIGHT, value, id, this.axisRX, this.axisRY, direction);
+			}
 
 		} else if(Axis.RY.equals(id)) {
 			
 			this.axisRY = Gamepad.isDead(value) ? 0.0F : value;
-			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisRX, this.axisRY);
+			Direction direction = XIGamepadButtonMapping.getAnalogStickDirection(value, this.axisRX, this.axisRY);
+			
+			if(direction != null) {
+				
+				this.processAnalogStickEvent(ANALOG_STICK_RIGHT, value, id, this.axisRX, this.axisRY, direction);
+			}
 			
 		} else if(Axis.Z.equals(id)) {
 			
 			this.axisZ = value;
+			this.processTriggerEvent(TRIGGER_LEFT, value);
+			
+		} else if(Axis.RZ.equals(id)) {
+			
+			this.axisRZ = value;
+			this.processTriggerEvent(TRIGGER_RIGHT, value);
 		}
 	}
 	
+	private final void processTriggerEvent(int trigger, float value) {
+		
+		this.listeners.forEach(listener -> {
+			
+			if(listener instanceof XIGamepadListener) {
+				
+				((XIGamepadListener)listener).onTriggerPush(new XIGamepadEvent(this, trigger, value));
+				
+				if(value == 1.0F) {
+					
+					listener.onButtonPress(new XIGamepadEvent(this, trigger == TRIGGER_LEFT ? BUTTON_LT : BUTTON_RT, true));
+					
+				} else if(value == 0.0F) {
+					
+					listener.onButtonRelease(new XIGamepadEvent(this, trigger == TRIGGER_LEFT ? BUTTON_LT : BUTTON_RT, false));
+				}
+			}
+		});
+	}
+	
 	/**
-	 * JInput doesn't have support for the XInput API (yet).
-	 * Instead this method will return the sum of LT and RT.
+	 * <strike>JInput doesn't have support for the XInput API (yet).
+	 * Instead</strike> this method will return the sum of LT and RT.
 	 * LT and RT can only have the values {@code -1.0F}, {@code 0.0F} and {@code 1.0F}.
 	 * @return {@code -1.0F} if the LT button is down but the RT isn't, {@code 0.0F} if both triggers are down or not used and {@code 1.0F}
 	 * 		   if the RT button is down but LT isn't
 	 * @since 1.0.0
+	 * @deprecated since 1.1.0; see {@linkplain XIGamepadListener#onTriggerPush(GamepadEvent)}
 	 */
+	@Deprecated
 	public float getTriggerValue() {
 		
-		return this.axisZ;
+		float z = this.axisZ == 1.0F ? -1.0F : 0.0F;
+		float rz = this.axisRZ == 1.0F ? this.axisRZ : 0.0F;
+		
+		return z + rz;
+	}
+	
+	/**
+	 * @return {@code true} if the START and BACK buttons and the POV are missing, else {@code false}
+	 * @since 1.1.0
+	 */
+	public boolean hasNoNavigation() {
+		
+		return Util.hasNoNavigation(this.controller);
 	}
 }

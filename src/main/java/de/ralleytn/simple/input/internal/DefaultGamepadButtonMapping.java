@@ -28,6 +28,7 @@ import static net.java.games.input.Component.Identifier.Button.*;
 import java.util.Collections;
 import java.util.Map;
 
+import de.ralleytn.simple.input.Direction;
 import net.java.games.input.Component.Identifier;
 
 import static de.ralleytn.simple.input.GamepadEvent.*;
@@ -35,10 +36,10 @@ import static de.ralleytn.simple.input.GamepadEvent.*;
 /**
  * Maps the JInput identifiers to the SimpleInput constants.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
-public final class DirectInputGamepadButtonMapping {
+public final class DefaultGamepadButtonMapping {
 
 	private static final Object[] MAPPING = {
 			
@@ -70,9 +71,39 @@ public final class DirectInputGamepadButtonMapping {
 		_12,          BUTTON_MODE,
 		MODE,         BUTTON_MODE
 	};
-	private static final Map<Identifier, Integer> MAP = Collections.unmodifiableMap(Util.toMap(DirectInputGamepadButtonMapping.MAPPING));
+	private static final Map<Identifier, Integer> MAP = Collections.unmodifiableMap(Util.toMap(DefaultGamepadButtonMapping.MAPPING));
 	
-	private DirectInputGamepadButtonMapping() {}
+	private DefaultGamepadButtonMapping() {}
+	
+	/**
+	 * Moved from {@linkplain Gamepad} to {@linkplain DefaultGamepadButtonMapping}.
+	 * @param value the value
+	 * @param x x value
+	 * @param y y value
+	 * @return the direction in which the analog stick is pushed
+	 * @since 1.0.0
+	 */
+	public static final Direction getAnalogStickDirection(float value, float x, float y) {
+		
+		Direction direction = null;
+		
+		if(value != 0.0F) {
+			
+			double angle = Math.toDegrees(Math.atan2(y, x));
+			
+			       if(angle == -90.0F) {direction = Direction.NORTH;
+			} else if(angle == 0.0F)   {direction = Direction.EAST;
+			} else if(angle == 180.0F) {direction = Direction.WEST;
+			} else if(angle == 90.0F)  {direction = Direction.SOUTH;
+			} else if(angle < -90.0F)  {direction = Direction.NORTH_WEST;
+			} else if(angle < 0.0F)    {direction = Direction.NORTH_EAST;
+			} else if(angle > 90.0F)   {direction = Direction.SOUTH_WEST;
+			} else if(angle > 0.0F)    {direction = Direction.SOUTH_EAST;
+			}
+		}
+		
+		return direction;
+	}
 	
 	/**
 	 * @return the button mapping
@@ -80,7 +111,7 @@ public final class DirectInputGamepadButtonMapping {
 	 */
 	public static final Map<Identifier, Integer> getMap() {
 		
-		return DirectInputGamepadButtonMapping.MAP;
+		return DefaultGamepadButtonMapping.MAP;
 	}
 	
 	/**
@@ -89,7 +120,7 @@ public final class DirectInputGamepadButtonMapping {
 	 */
 	public static final int getDownButtonArraySize() {
 		
-		return Util.getMaxValue(DirectInputGamepadButtonMapping.MAP.values()) + 1;
+		return Util.getMaxValue(DefaultGamepadButtonMapping.MAP.values()) + 1;
 	}
 	
 	/**
@@ -99,6 +130,6 @@ public final class DirectInputGamepadButtonMapping {
 	 */
 	public static final boolean isValidButton(Identifier id) {
 		
-		return DirectInputGamepadButtonMapping.MAP.containsKey(id);
+		return DefaultGamepadButtonMapping.MAP.containsKey(id);
 	}
 }

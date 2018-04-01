@@ -25,7 +25,7 @@ package de.ralleytn.simple.input;
 
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Component.Identifier.Axis;
-import de.ralleytn.simple.input.internal.DirectInputGamepadButtonMapping;
+import de.ralleytn.simple.input.internal.DefaultGamepadButtonMapping;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import net.java.games.input.Event;
@@ -33,7 +33,7 @@ import net.java.games.input.Event;
 /**
  * Represents a gamepad that uses the DirectInput API.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class DefaultGamepad extends Gamepad {
@@ -45,7 +45,7 @@ public class DefaultGamepad extends Gamepad {
 
 	DefaultGamepad(Controller controller) {
 		
-		super(controller, DirectInputGamepadButtonMapping.getDownButtonArraySize());
+		super(controller, DefaultGamepadButtonMapping.getDownButtonArraySize(), new MouseControl());
 	}
 	
 	@Override
@@ -55,7 +55,7 @@ public class DefaultGamepad extends Gamepad {
 		
 		for(Component component : this.controller.getComponents()) {
 			
-			if(DirectInputGamepadButtonMapping.isValidButton(component.getIdentifier())) {
+			if(DefaultGamepadButtonMapping.isValidButton(component.getIdentifier())) {
 				
 				buttonCount++;
 			}
@@ -81,30 +81,34 @@ public class DefaultGamepad extends Gamepad {
 			
 			this.processPOVEvent(id, value);
 			
-		} else if(DirectInputGamepadButtonMapping.isValidButton(id)) {
+		} else if(DefaultGamepadButtonMapping.isValidButton(id)) {
 			
-			int button = DirectInputGamepadButtonMapping.getMap().get(id);
+			int button = DefaultGamepadButtonMapping.getMap().get(id);
 			this.processButtonEvent(button, value);
 			       
 		} else if(Axis.Y.equals(id)) {
-			
+			System.out.println(component.isAnalog());
 			this.axisY = Gamepad.isDead(value) ? 0.0F : value;
-			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY);
+			Direction direction = DefaultGamepadButtonMapping.getAnalogStickDirection(value, this.axisX, this.axisY);
+			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY, direction);
 			
 		} else if(Axis.X.equals(id)) {
 			
 			this.axisX = Gamepad.isDead(value) ? 0.0F : value;
-			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY);
+			Direction direction = DefaultGamepadButtonMapping.getAnalogStickDirection(value, this.axisX, this.axisY);
+			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_LEFT, value, id, this.axisX, this.axisY, direction);
 			
 		} else if(Axis.RZ.equals(id)) {
 			
 			this.axisRZ = Gamepad.isDead(value) ? 0.0F : value;
-			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisZ, this.axisRZ);
+			Direction direction = DefaultGamepadButtonMapping.getAnalogStickDirection(value, this.axisZ, this.axisRZ);
+			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisZ, this.axisRZ, direction);
 
 		} else if(Axis.Z.equals(id)) {
 			
 			this.axisZ = Gamepad.isDead(value) ? 0.0F : value;
-			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisZ, this.axisRZ);
+			Direction direction = DefaultGamepadButtonMapping.getAnalogStickDirection(value, this.axisZ, this.axisRZ);
+			this.processAnalogStickEvent(GamepadEvent.ANALOG_STICK_RIGHT, value, id, this.axisZ, this.axisRZ, direction);
 		}
 	}
 }

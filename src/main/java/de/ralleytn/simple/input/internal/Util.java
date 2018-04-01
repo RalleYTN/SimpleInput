@@ -29,16 +29,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.ralleytn.simple.input.XIGamepad;
 import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
-import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
-import net.java.games.input.Component.Identifier.Axis;
 
 /**
  * Contains utility methods for SimpleInput.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public final class Util {
@@ -50,6 +49,18 @@ public final class Util {
 	public static final Robot ROBOT = Util.createRobot();
 	
 	private Util() {}
+	
+	/**
+	 * Helper method for {@link XIGamepad#hasNoNavigation()}
+	 * @param controller the controller for a {@linkplain XIGamepad}
+	 * @return the same as XIGamepad#hasNoNavigation()
+	 * @since 1.1.0
+	 * @see XIGamepad#hasNoNavigation()
+	 */
+	public static final boolean hasNoNavigation(Controller controller) {
+		
+		return controller.getComponents().length == 14;
+	}
 	
 	/**
 	 * @param values a collection of integers
@@ -98,29 +109,7 @@ public final class Util {
 	 */
 	public static final boolean isXInput(Controller controller) {
 
-		Component[] components = controller.getComponents();
-		
-		boolean hasXAxis = false;
-		boolean hasYAxis = false;
-		boolean hasZAxis = false;
-		boolean hasRXAxis = false;
-		boolean hasRYAxis = false;
-		boolean hasPOV = false;
-		
-		for(Component component : components) {
-			
-			Identifier id = component.getIdentifier();
-			
-				   if(Axis.X.equals(id))   {hasXAxis = true;
-			} else if(Axis.Y.equals(id))   {hasYAxis = true;
-			} else if(Axis.RX.equals(id))  {hasRXAxis = true;
-			} else if(Axis.RY.equals(id))  {hasRYAxis = true;
-			} else if(Axis.Z.equals(id))   {hasZAxis = true;
-			} else if(Axis.POV.equals(id)) {hasPOV = true;
-			}
-		}
-			
-		return hasPOV && hasRXAxis && hasRYAxis && hasXAxis && hasYAxis && hasZAxis;
+		return "XIController".equals(controller.getClass().getSimpleName());
 	}
 
 	private static final Robot createRobot() {

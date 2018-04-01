@@ -33,7 +33,7 @@ import de.ralleytn.simple.input.DeviceManager;
 import de.ralleytn.simple.input.Gamepad;
 import de.ralleytn.simple.input.Keyboard;
 import de.ralleytn.simple.input.Mouse;
-import de.ralleytn.simple.input.XInputGamepad;
+import de.ralleytn.simple.input.XIGamepad;
 
 class DeviceManagerTest {
 	
@@ -192,7 +192,7 @@ class DeviceManagerTest {
 			System.out.println("Port Number: " + gamepad.getPortNumber());
 			System.out.println("Button Count: " + gamepad.getButtonCount());
 			System.out.println("Can Rumble: " + gamepad.canRumble());
-			System.out.println("XInput: " + (gamepad instanceof XInputGamepad));
+			System.out.println("XInput: " + (gamepad instanceof XIGamepad));
 		}
 		
 		DeviceManager.destroy();

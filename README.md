@@ -31,6 +31,18 @@ mouse.startListening();
 
 ## Changelog
 
+### Version 1.1.0 (not backwards compatible)
+
+- Added full support for XInput gamepads
+- Renamed the `XInputGamepad` class to `XIGamepad`
+- Added the `XIGamepadListener` interface
+- Added the constant `ANALOG_STICK_NONE` to the `GamepadEvent` class
+- Removed the console outputs when the `ControllerListener` events are fired
+- The `MouseControl` class is no longer final
+- Added the `XIMouseControl` class to deal with the inverted UP and DOWN of XInput Gamepads
+- Added the `XIGamepadAdapter` class
+- Added the `XIGamepadEvent` class
+
 ### Version 1.0.0
 
 - Release

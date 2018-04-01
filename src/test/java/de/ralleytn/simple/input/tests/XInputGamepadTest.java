@@ -35,7 +35,7 @@ import de.ralleytn.simple.input.Gamepad;
 import de.ralleytn.simple.input.GamepadAdapter;
 import de.ralleytn.simple.input.GamepadEvent;
 import de.ralleytn.simple.input.MouseControl;
-import de.ralleytn.simple.input.XInputGamepad;
+import de.ralleytn.simple.input.XIGamepad;
 
 //TODO
 //==== 23.03.2018 | Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
@@ -139,7 +139,9 @@ class XInputGamepadTest {
 		TestUtil.sleep(() -> frame.getButtonCheckList().isAtLeastOneItemUnchecked() ||
 							 frame.getPovCheckList().isAtLeastOneItemUnchecked() ||
 							 frame.getLeftAnalogStickCheckList().isAtLeastOneItemUnchecked() ||
-							 frame.getRightAnalogStickCheckList().isAtLeastOneItemUnchecked());
+							 frame.getRightAnalogStickCheckList().isAtLeastOneItemUnchecked() ||
+							 frame.getLTCheckList().isAtLeastOneItemUnchecked() ||
+							 frame.getRTCheckList().isAtLeastOneItemUnchecked());
 		
 		frame.dispose();
 		DeviceManager.getGamepads().forEach(Gamepad::stopListening);
@@ -150,7 +152,7 @@ class XInputGamepadTest {
 		
 		for(Gamepad gamepad : DeviceManager.getGamepads()) {
 			
-			if(gamepad instanceof XInputGamepad) {
+			if(gamepad instanceof XIGamepad) {
 				
 				return gamepad;
 			}

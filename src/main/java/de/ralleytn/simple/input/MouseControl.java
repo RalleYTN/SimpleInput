@@ -32,10 +32,10 @@ import de.ralleytn.simple.input.internal.Util;
 /**
  * Responsible for controlling the mouse with a gamepad.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
-public final class MouseControl {
+public class MouseControl {
 
 	private int lmbMapping;
 	private int rmbMapping;

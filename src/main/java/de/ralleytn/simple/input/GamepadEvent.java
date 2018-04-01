@@ -26,11 +26,17 @@ package de.ralleytn.simple.input;
 /**
  * Represents an event that was fired by a gamepad.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public class GamepadEvent extends DeviceEvent {
-
+	
+	/**
+	 * No analog stick
+	 * @since 1.1.0
+	 */
+	public static final int ANALOG_STICK_NONE = -1;
+	
 	/**
 	 * The left analog stick
 	 * @since 1.0.0
@@ -148,6 +154,23 @@ public class GamepadEvent extends DeviceEvent {
 		this.analogStick = analogStick;
 		this.button = button;
 		this.intensity = intensity;
+	}
+	
+	/**
+	 * 
+	 * @param device
+	 * @param button
+	 * @param intensity
+	 * @since 1.1.0
+	 */
+	public GamepadEvent(Device device, int button, boolean press) {
+		
+		super(device);
+		
+		this.direction = null;
+		this.analogStick = ANALOG_STICK_NONE;
+		this.button = button;
+		this.intensity = press ? 1.0F : 0.0F;
 	}
 	
 	/**

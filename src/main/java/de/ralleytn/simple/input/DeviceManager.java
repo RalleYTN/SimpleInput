@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.ralleytn.plugins.jinput.xinput.XInputEnvironmentPlugin;
 import de.ralleytn.simple.input.internal.Util;
 import net.java.games.input.Controller;
 import net.java.games.input.Controller.Type;
@@ -38,7 +39,7 @@ import net.java.games.input.ControllerListener;
 /**
  * Manages the input devices.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public final class DeviceManager {
@@ -52,17 +53,17 @@ public final class DeviceManager {
 	
 	protected static synchronized final void removeDevice(Device device) {
 		
-		DeviceManager.DEVICES.remove(device);
+		DEVICES.remove(device);
 	}
 	
 	private static synchronized final void addDevice(Controller controller) {
 		
 		Type type = controller.getType();
 		
-			   if(type == Type.MOUSE)    {DeviceManager.DEVICES.add(new Mouse(controller));
-		} else if(type == Type.KEYBOARD) {DeviceManager.DEVICES.add(new Keyboard(controller));
-		} else if(type == Type.STICK)    {DeviceManager.DEVICES.add(new DefaultGamepad(controller));
-		} else if(type == Type.GAMEPAD)  {DeviceManager.DEVICES.add(Util.isXInput(controller) ? new XInputGamepad(controller) : new DefaultGamepad(controller));
+			   if(type == Type.MOUSE)    {DEVICES.add(new Mouse(controller));
+		} else if(type == Type.KEYBOARD) {DEVICES.add(new Keyboard(controller));
+		} else if(type == Type.STICK)    {DEVICES.add(new DefaultGamepad(controller));
+		} else if(type == Type.GAMEPAD)  {DEVICES.add(Util.isXInput(controller) ? new XIGamepad(controller) : new DefaultGamepad(controller));
 		}
 	}
 	
@@ -95,6 +96,18 @@ public final class DeviceManager {
 		}
 	}
 	
+	private static final ControllerEnvironment getEnvironment() {
+		
+		ControllerEnvironment environment = new XInputEnvironmentPlugin();
+		
+		if(!environment.isSupported()) {
+			
+			environment = ControllerEnvironment.getDefaultEnvironment();
+		}
+		
+		return environment;
+	}
+	
 	/**
 	 * Creates the context.
 	 * Has to be done before using any other methods.
@@ -103,19 +116,19 @@ public final class DeviceManager {
 	 */
 	public static synchronized final void create() {
 		
-		if(!DeviceManager.CREATED) {
+		if(!CREATED) {
 			
-			DeviceManager.DEVICES = new ArrayList<>();
-			DeviceManager.CONTROLLER_LISTENER = new Adapter();
-			DeviceManager.ENVIRONMENT = ControllerEnvironment.getDefaultEnvironment();
-			DeviceManager.ENVIRONMENT.addControllerListener(DeviceManager.CONTROLLER_LISTENER);
+			DEVICES = new ArrayList<>();
+			CONTROLLER_LISTENER = new Adapter();
+			ENVIRONMENT = getEnvironment();
+			ENVIRONMENT.addControllerListener(CONTROLLER_LISTENER);
 			
-			for(Controller controller : DeviceManager.ENVIRONMENT.getControllers()) {
+			for(Controller controller : ENVIRONMENT.getControllers()) {
 				
-				DeviceManager.addDevice(controller);
+				addDevice(controller);
 			}
 			
-			DeviceManager.CREATED = true;
+			CREATED = true;
 		}
 	}
 
@@ -127,22 +140,22 @@ public final class DeviceManager {
 	 */
 	public static synchronized final void destroy() {
 		
-		if(DeviceManager.CREATED) {
+		if(CREATED) {
 			
-			DeviceManager.stopListening();
-			DeviceManager.ENVIRONMENT.removeControllerListener(DeviceManager.CONTROLLER_LISTENER);
-			DeviceManager.CONTROLLER_LISTENER = null;
-			DeviceManager.ENVIRONMENT = null;
-			DeviceManager.DEVICES = null;
-			DeviceManager.CREATED = false;
+			stopListening();
+			ENVIRONMENT.removeControllerListener(CONTROLLER_LISTENER);
+			CONTROLLER_LISTENER = null;
+			ENVIRONMENT = null;
+			DEVICES = null;
+			CREATED = false;
 		}
 	}
 	
 	private static final void stopListening() {
 		
-		DeviceManager.getMice().forEach(Mouse::stopListening);
-		DeviceManager.getKeyboards().forEach(Keyboard::stopListening);
-		DeviceManager.getGamepads().forEach(Gamepad::stopListening);
+		getMice().forEach(Mouse::stopListening);
+		getKeyboards().forEach(Keyboard::stopListening);
+		getGamepads().forEach(Gamepad::stopListening);
 	}
 	
 	/**
@@ -152,7 +165,7 @@ public final class DeviceManager {
 	 */
 	public static synchronized final void addMouseListener(MouseListener listener) {
 		
-		DeviceManager.getMice().forEach(mouse -> mouse.addMouseListener(listener));
+		getMice().forEach(mouse -> mouse.addMouseListener(listener));
 	}
 	
 	/**
@@ -162,7 +175,7 @@ public final class DeviceManager {
 	 */
 	public static synchronized final void removeMouseListener(MouseListener listener) {
 		
-		DeviceManager.getMice().forEach(mouse -> mouse.removeMouseListener(listener));
+		getMice().forEach(mouse -> mouse.removeMouseListener(listener));
 	}
 	
 	/**
@@ -172,7 +185,7 @@ public final class DeviceManager {
 	 */
 	public static synchronized final void addKeyboardListener(KeyboardListener listener) {
 		
-		DeviceManager.getKeyboards().forEach(keyboard -> keyboard.addKeyboardListener(listener));
+		getKeyboards().forEach(keyboard -> keyboard.addKeyboardListener(listener));
 	}
 	
 	/**
@@ -182,7 +195,7 @@ public final class DeviceManager {
 	 */
 	public static synchronized final void removeKeyboardListener(KeyboardListener listener) {
 		
-		DeviceManager.getKeyboards().forEach(keyboard -> keyboard.removeKeyboardListener(listener));
+		getKeyboards().forEach(keyboard -> keyboard.removeKeyboardListener(listener));
 	}
 	
 	/**
@@ -192,7 +205,7 @@ public final class DeviceManager {
 	 */
 	public static synchronized final void addGamepadListener(GamepadListener listener) {
 		
-		DeviceManager.getGamepads().forEach(gamepad -> gamepad.addGamepadListener(listener));
+		getGamepads().forEach(gamepad -> gamepad.addGamepadListener(listener));
 	}
 	
 	/**
@@ -202,7 +215,7 @@ public final class DeviceManager {
 	 */
 	public static synchronized final void removeGamepadListener(GamepadListener listener) {
 		
-		DeviceManager.getGamepads().forEach(gamepad -> gamepad.removeGamepadListener(listener));
+		getGamepads().forEach(gamepad -> gamepad.removeGamepadListener(listener));
 	}
 	
 	/**
@@ -212,7 +225,7 @@ public final class DeviceManager {
 	public static synchronized final List<Mouse> getMice() {
 		
 		List<Mouse> mice = new ArrayList<>();
-		DeviceManager.DEVICES.forEach(device -> {
+		DEVICES.forEach(device -> {
 			
 			if(device instanceof Mouse) {
 				
@@ -230,7 +243,7 @@ public final class DeviceManager {
 	public static synchronized final List<Keyboard> getKeyboards() {
 		
 		List<Keyboard> keyboards = new ArrayList<>();
-		DeviceManager.DEVICES.forEach(device -> {
+		DEVICES.forEach(device -> {
 			
 			if(device instanceof Keyboard) {
 				
@@ -248,7 +261,7 @@ public final class DeviceManager {
 	public static synchronized final List<Gamepad> getGamepads() {
 		
 		List<Gamepad> gamepads = new ArrayList<>();
-		DeviceManager.DEVICES.forEach(device -> {
+		DEVICES.forEach(device -> {
 			
 			if(device instanceof Gamepad) {
 				
@@ -268,7 +281,7 @@ public final class DeviceManager {
 		
 		List<Mouse> mice = new ArrayList<>();
 		
-		for(Mouse mouse : DeviceManager.getMice()) {
+		for(Mouse mouse : getMice()) {
 			
 			if(mouse.getName().equals(name)) {
 				
@@ -288,7 +301,7 @@ public final class DeviceManager {
 		
 		List<Keyboard> keyboards = new ArrayList<>();
 		
-		for(Keyboard keyboard : DeviceManager.getKeyboards()) {
+		for(Keyboard keyboard : getKeyboards()) {
 			
 			if(keyboard.getName().equals(name)) {
 				
@@ -308,7 +321,7 @@ public final class DeviceManager {
 		
 		List<Gamepad> gamepads = new ArrayList<>();
 		
-		for(Gamepad gamepad : DeviceManager.getGamepads()) {
+		for(Gamepad gamepad : getGamepads()) {
 			
 			if(gamepad.getName().equals(name)) {
 				
@@ -327,10 +340,10 @@ public final class DeviceManager {
 		@Override
 		public synchronized void controllerRemoved(ControllerEvent event) {
 			
-			System.out.println("Removed " + event.getController().getName());
+			// System.out.println("Removed " + event.getController().getName());
 			
 			List<Device> devices = new ArrayList<>();
-			DeviceManager.DEVICES.forEach(device -> {
+			DEVICES.forEach(device -> {
 
 				if(device.getController() == event.getController()) {
 					
@@ -342,16 +355,16 @@ public final class DeviceManager {
 				}
 			});
 			
-			DeviceManager.DEVICES = devices;
+			DEVICES = devices;
 		}
 		
 		@Override
 		public synchronized void controllerAdded(ControllerEvent event) {
 
-			System.out.println("Added " + event.getController().getName());
+			// System.out.println("Added " + event.getController().getName());
 			
 			Controller controller = event.getController();
-			DeviceManager.addDevice(controller);
+			addDevice(controller);
 		}
 	}
 }

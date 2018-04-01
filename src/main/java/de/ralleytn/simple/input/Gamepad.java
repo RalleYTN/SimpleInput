@@ -39,7 +39,7 @@ import net.java.games.input.Rumbler;
 /**
  * Represents a gamepad.
  * @author Ralph Niemitz/RalleYTN(ralph.niemitz@gmx.de)
- * @version 1.0.0
+ * @version 1.1.0
  * @since 1.0.0
  */
 public abstract class Gamepad extends Device {
@@ -58,14 +58,14 @@ public abstract class Gamepad extends Device {
 	protected MouseControl mouseControl;
 	protected boolean[] buttonsThatAreDown;
 	
-	Gamepad(Controller controller, int buttonDownArraySize) {
+	Gamepad(Controller controller, int buttonDownArraySize, MouseControl control) {
 		
 		super(controller);
 
 		this.buttonsThatAreDown = new boolean[buttonDownArraySize];
 		this.rumblers = controller.getRumblers();
 		this.listeners = new ArrayList<>();
-		this.mouseControl = new MouseControl();
+		this.mouseControl = control;
 		this.buttonCount = this.countButtons();
 	}
 	
@@ -194,7 +194,7 @@ public abstract class Gamepad extends Device {
 	
 	protected final void processButtonEvent(int button, float value) {
 		
-		GamepadEvent gamepadEvent = new GamepadEvent(this, null, -1, button, 0.0F);
+		GamepadEvent gamepadEvent = new GamepadEvent(this, button, value == 1.0F);
 		
 		if(value == 0.0F) {
 			
@@ -237,13 +237,12 @@ public abstract class Gamepad extends Device {
 		}
 	}
 	
-	protected final void processAnalogStickEvent(int analogStick, float value, Identifier id, float x, float y) {
+	protected final void processAnalogStickEvent(int analogStick, float value, Identifier id, float x, float y, Direction direction) {
 		
 		float intensity = Gamepad.getIntensity(x, y);
 		
 		if(intensity > this.deadZone) {
 			
-			Direction direction = Gamepad.getAnalogStickDirection(value, x, y);
 			this.listeners.forEach(listener -> listener.onAnalogStickPush(new GamepadEvent(this, direction, analogStick, -1, intensity)));
 		}
 	}
@@ -271,28 +270,6 @@ public abstract class Gamepad extends Device {
 		} else if(value == 0.75F)  {direction = Direction.SOUTH;
 		} else if(value == 0.875F) {direction = Direction.SOUTH_WEST;
 		} else if(value == 1.0F)   {direction = Direction.WEST;
-		}
-		
-		return direction;
-	}
-
-	private static final Direction getAnalogStickDirection(float value, float x, float y) {
-		
-		Direction direction = null;
-		
-		if(value != 0.0F) {
-			
-			double angle = Math.toDegrees(Math.atan2(y, x));
-			
-			       if(angle == -90.0F) {direction = Direction.NORTH;
-			} else if(angle == 0.0F)   {direction = Direction.EAST;
-			} else if(angle == 180.0F) {direction = Direction.WEST;
-			} else if(angle == 90.0F)  {direction = Direction.SOUTH;
-			} else if(angle < -90.0F)  {direction = Direction.NORTH_WEST;
-			} else if(angle < 0.0F)    {direction = Direction.NORTH_EAST;
-			} else if(angle > 90.0F)   {direction = Direction.SOUTH_WEST;
-			} else if(angle > 0.0F)    {direction = Direction.SOUTH_EAST;
-			}
 		}
 		
 		return direction;
