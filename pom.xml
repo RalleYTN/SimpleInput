@@ -52,8 +52,13 @@
     <dependencies>
 		<dependency>
 			<groupId>com.github.RalleYTN</groupId>
+			<artifactId>XInput-Wrapper</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.RalleYTN</groupId>
 			<artifactId>XInput-Plugin-for-JInput</artifactId>
-			<version>6bd4889</version>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.java.jinput</groupId>
